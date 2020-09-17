@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Михаил Черкасов](https://up.htmlacademy.ru/javascript/21/user/1435443).
-* Наставник: `Неизвестно`.
+* Наставник: [Татьяна Осадчук](https://htmlacademy.ru/profile/tanyachuk).
 
 ---
 
