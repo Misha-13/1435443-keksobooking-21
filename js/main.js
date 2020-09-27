@@ -4,8 +4,8 @@ const REALTY_TYPES = [`palace`, `flat`, `house`, `bungalow`];
 const TIME_BOUNDS = [`12:00`, `13:00`, `14:00`];
 const FEATURES = [`wifi`, `dishwasher`, `parking`, `washer`, `elevator`, `conditioner`];
 const PHOTOS = [`http://o0.github.io/assets/images/tokyo/hotel1.jpg`, `http://o0.github.io/assets/images/tokyo/hotel2.jpg`, `http://o0.github.io/assets/images/tokyo/hotel3.jpg`];
-const MIN_X = 10;
-const MAX_X = 765;
+const MIN_X = 0;
+const MAX_X = 1200;
 const MIN_Y = 130;
 const MAX_Y = 630;
 const MIN_PRICE = 500;
@@ -72,8 +72,8 @@ const createPins = function (elementQuantity = 8) {
   let pins = [];
   const avatars = generateAvatarsArr();
   for (let i = 0; i < elementQuantity; i++) {
-    let x = createValueInRange(MIN_X, MAX_X);
-    let y = createValueInRange(MIN_Y, MAX_Y);
+    const x = createValueInRange(MIN_X + X_SHIFT, MAX_X - X_SHIFT - X_SHIFT);
+    const y = createValueInRange(MIN_Y + Y_SHIFT, MAX_Y);
     pins.push({
       'author': {
         'avatar': avatars[i]
@@ -103,9 +103,9 @@ const createPins = function (elementQuantity = 8) {
 const fillPins = function (pin) {
   const pinElement = pinTemplate.cloneNode(true);
   const img = pinElement.querySelector(`img`);
-  const pinX = pin.location.x - X_SHIFT;
-  const pinY = pin.location.y - Y_SHIFT;
-  pinElement.setAttribute(`style`, `left: ` + pinX + `px; top: ` + pinY + `px;`);
+  // const pinX = pin.location.x - X_SHIFT;
+  // const pinY = pin.location.y - Y_SHIFT;
+  pinElement.setAttribute(`style`, `left: ` + pin.location.x + `px; top: ` + pin.location.y + `px;`);
   img.setAttribute(`src`, pin.author.avatar);
   img.setAttribute(`alt`, pin.offer.title);
   return pinElement;
