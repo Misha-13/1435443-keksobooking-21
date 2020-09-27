@@ -103,9 +103,9 @@ const createPins = function (elementQuantity = 8) {
 const fillPins = function (pin) {
   const pinElement = pinTemplate.cloneNode(true);
   const img = pinElement.querySelector(`img`);
-  // const pinX = pin.location.x - X_SHIFT;
-  // const pinY = pin.location.y - Y_SHIFT;
-  pinElement.setAttribute(`style`, `left: ` + pin.location.x + `px; top: ` + pin.location.y + `px;`);
+  const pinX = pin.location.x;
+  const pinY = pin.location.y - Y_SHIFT;
+  pinElement.setAttribute(`style`, `left: ` + pinX + `px; top: ` + pinY + `px;`);
   img.setAttribute(`src`, pin.author.avatar);
   img.setAttribute(`alt`, pin.offer.title);
   return pinElement;
