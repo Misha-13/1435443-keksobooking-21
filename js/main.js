@@ -18,8 +18,8 @@ const X_SHIFT = 25;
 const Y_SHIFT = 70;
 const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
-const pinsList = document.querySelector(`.map__pins`);
-const fragment = document.createDocumentFragment();
+let pinsList = document.querySelector(`.map__pins`);
+let fragment = document.createDocumentFragment();
 
 const generateIndices = function (iteration, exitValue = 1) {
   let indices = [];
