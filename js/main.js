@@ -18,8 +18,8 @@ const X_SHIFT = 25;
 const Y_SHIFT = 70;
 const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
-let pinsList = document.querySelector(`.map__pins`);
-let fragment = document.createDocumentFragment();
+const pinsList = document.querySelector(`.map__pins`);
+const fragment = document.createDocumentFragment();
 
 const generateIndices = function (iteration, exitValue = 1) {
   let indices = [];
@@ -101,7 +101,7 @@ const createPins = function (elementQuantity = 8) {
 };
 
 const fillPins = function (pin) {
-  let pinElement = pinTemplate.cloneNode(true);
+  const pinElement = pinTemplate.cloneNode(true);
   const img = pinElement.querySelector(`img`);
   const pinX = pin.location.x - X_SHIFT;
   const pinY = pin.location.y - Y_SHIFT;
