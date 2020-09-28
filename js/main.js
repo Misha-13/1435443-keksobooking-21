@@ -72,7 +72,7 @@ const createPins = function (elementQuantity = 8) {
   let pins = [];
   const avatars = generateAvatarsArr();
   for (let i = 0; i < elementQuantity; i++) {
-    const x = createValueInRange(MIN_X + X_SHIFT, MAX_X - X_SHIFT - X_SHIFT);
+    const x = createValueInRange(MIN_X + X_SHIFT, MAX_X - X_SHIFT);
     const y = createValueInRange(MIN_Y + Y_SHIFT, MAX_Y);
     pins.push({
       'author': {
@@ -103,7 +103,7 @@ const createPins = function (elementQuantity = 8) {
 const fillPins = function (pin) {
   const pinElement = pinTemplate.cloneNode(true);
   const img = pinElement.querySelector(`img`);
-  const pinX = pin.location.x;
+  const pinX = pin.location.x - X_SHIFT;
   const pinY = pin.location.y - Y_SHIFT;
   pinElement.setAttribute(`style`, `left: ` + pinX + `px; top: ` + pinY + `px;`);
   img.setAttribute(`src`, pin.author.avatar);
