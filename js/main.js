@@ -72,8 +72,8 @@ const createPins = function (elementQuantity = 8) {
   let pins = [];
   const avatars = generateAvatarsArr();
   for (let i = 0; i < elementQuantity; i++) {
-    const x = createValueInRange(MIN_X + X_SHIFT, MAX_X - X_SHIFT);
-    const y = createValueInRange(MIN_Y + Y_SHIFT, MAX_Y);
+    const x = createValueInRange(MIN_X, MAX_X);
+    const y = createValueInRange(MIN_Y, MAX_Y);
     pins.push({
       'author': {
         'avatar': avatars[i]
@@ -124,58 +124,63 @@ const cardFragment = document.createDocumentFragment();
 const mapArea = document.querySelector(`.map`);
 const insertTargetElement = mapArea.querySelector(`.map__filters-container`);
 
-const fillCards = function (card) {
-  const cardElement = cardTemplate.cloneNode(true);
-  const imgList = cardElement.querySelector(`.popup__photos`);
-  const imgTemplate = cardElement.querySelector(`.popup__photos`).querySelector(`img`);
+const delNotUseFeatures = function (template, currentArray) {
+  const childrenElements = template.querySelector(`.popup__features`).children;
+  for (let i = childrenElements.length - 1; i >= 0; i--) {
+    const childElement = childrenElements[i];
+    let existFlag = false;
+    for (let j = 0; j < currentArray.length; j++) {
+      if (childElement.classList.contains(`popup__feature--` + currentArray[j])) {
+        existFlag = true;
+      }
+    }
+    if (existFlag === false) {
+      childElement.remove();
+    }
+  }
+};
+
+const fillPhotos = function (template, photo) {
+  const imgElement = template.cloneNode(true);
+  imgElement.setAttribute(`src`, photo);
+  return imgElement;
+};
+
+const fillPhotosBlock = function (template, imgArray) {
+  const imgTemplate = template.querySelector(`.popup__photos`).querySelector(`img`);
+  const imgList = template.querySelector(`.popup__photos`);
   const imgFragment = document.createDocumentFragment();
-  const typeRusMatch = {
+  template.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, imgArray[0]);
+  for (let i = 1; i < imgArray.length; i++) {
+    imgFragment.appendChild(fillPhotos(imgTemplate, imgArray[i]));
+  }
+  imgList.appendChild(imgFragment);
+};
+
+const fillTextBlock = function (template, currentObject) {
+  const TypeRusMatch = {
     palace: `Дворец`,
     flat: `Квартира`,
     house: `Дом`,
     bungalow: `Бунгало`
   };
 
-  const getElementsAreNotInArray = function (currentArray) {
-    let elementsForDelete = [];
-    for (let item of cardElement.querySelector(`.popup__features`).children) {
-      let existFlag = false;
-      for (let i = 0; i < currentArray.length; i++) {
-        const currentFeature = currentArray[i];
-        if (item.classList.contains(`popup__feature--` + currentFeature)) {
-          existFlag = true;
-        }
-      }
-      if (existFlag === false) {
-        elementsForDelete.push(item);
-      }
-    }
-    return elementsForDelete;
-  };
+  template.querySelector(`.popup__title`).textContent = currentObject.title;
+  template.querySelector(`.popup__text--address`).textContent = currentObject.address;
+  template.querySelector(`.popup__text--price`).textContent = currentObject.price + `₽/ночь`;
+  template.querySelector(`.popup__type`).textContent = TypeRusMatch[currentObject.type];
+  template.querySelector(`.popup__text--capacity`).textContent = currentObject.rooms + ` комнаты для ` + currentObject.guests + ` гостей`;
+  template.querySelector(`.popup__text--time`).textContent = `Заезд после ` + currentObject.checkin + `, выезд до ` + currentObject.checkout;
+  template.querySelector(`.popup__description`).textContent = currentObject.description;
+};
 
-  const fillPhotos = function (photo) {
-    const imgElement = imgTemplate.cloneNode(true);
-    imgElement.setAttribute(`src`, photo);
-    return imgElement;
-  };
+const fillCards = function (card) {
+  const cardElement = cardTemplate.cloneNode(true);
 
-  cardElement.querySelector(`.popup__title`).textContent = card.offer.title;
-  cardElement.querySelector(`.popup__text--address`).textContent = card.offer.address;
-  cardElement.querySelector(`.popup__text--price`).textContent = card.offer.price + `₽/ночь`;
-  cardElement.querySelector(`.popup__type`).textContent = typeRusMatch[card.offer.type];
-  cardElement.querySelector(`.popup__text--capacity`).textContent = card.offer.rooms + ` комнаты для ` + card.offer.guests + ` гостей`;
-  cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ` + card.offer.checkin + `, выезд до ` + card.offer.checkout;
-  let delArr = getElementsAreNotInArray(card.offer.features);
-  for (let i = 0; i < delArr.length; i++) {
-    delArr[i].remove();
-  }
-  cardElement.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, card.offer.photos[0]);
-  for (let i = 1; i < card.offer.photos.length; i++) {
-    imgFragment.appendChild(fillPhotos(card.offer.photos[i]));
-  }
-  imgList.appendChild(imgFragment);
-  cardElement.querySelector(`.popup__description`).textContent = card.offer.description;
   cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
+  fillTextBlock(cardElement, card.offer);
+  delNotUseFeatures(cardElement, card.offer.features);
+  fillPhotosBlock(cardElement, card.offer.photos);
   return cardElement;
 };
 
