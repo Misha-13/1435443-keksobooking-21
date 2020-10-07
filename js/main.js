@@ -111,21 +111,21 @@ const fillPins = function (pin) {
   return pinElement;
 };
 
-const mapPins = createPins();
+/* const mapPins = createPins();
 map.classList.remove(`map--faded`);
 for (let i = 0; i < mapPins.length; i++) {
   fragment.appendChild(fillPins(mapPins[i]));
 }
-pinsList.appendChild(fragment);
+pinsList.appendChild(fragment); */
 
-
+/*
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 const cardFragment = document.createDocumentFragment();
 const mapArea = document.querySelector(`.map`);
 const insertTargetElement = mapArea.querySelector(`.map__filters-container`);
 
-const delNotUseFeatures = function (template, currentArray) {
-  const childrenElements = template.querySelector(`.popup__features`).children;
+const delNotUseFeatures = function (currentArray) {
+  const childrenElements = document.cardElement.querySelector(`.popup__features`).children;
   for (let i = childrenElements.length - 1; i >= 0; i--) {
     const childElement = childrenElements[i];
     let existFlag = false;
@@ -146,18 +146,18 @@ const fillPhotos = function (template, photo) {
   return imgElement;
 };
 
-const fillPhotosBlock = function (template, imgArray) {
-  const imgTemplate = template.querySelector(`.popup__photos`).querySelector(`img`);
-  const imgList = template.querySelector(`.popup__photos`);
+const fillPhotosBlock = function (imgArray) {
+  const imgTemplate = document.cardElement.querySelector(`.popup__photos`).querySelector(`img`);
+  const imgList = document.cardElement.querySelector(`.popup__photos`);
   const imgFragment = document.createDocumentFragment();
-  template.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, imgArray[0]);
+  document.cardElement.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, imgArray[0]);
   for (let i = 1; i < imgArray.length; i++) {
     imgFragment.appendChild(fillPhotos(imgTemplate, imgArray[i]));
   }
   imgList.appendChild(imgFragment);
 };
 
-const fillTextBlock = function (template, currentObject) {
+const fillTextBlock = function (currentObject) {
   const TypeRusMatch = {
     palace: `Дворец`,
     flat: `Квартира`,
@@ -165,24 +165,50 @@ const fillTextBlock = function (template, currentObject) {
     bungalow: `Бунгало`
   };
 
-  template.querySelector(`.popup__title`).textContent = currentObject.title;
-  template.querySelector(`.popup__text--address`).textContent = currentObject.address;
-  template.querySelector(`.popup__text--price`).textContent = currentObject.price + `₽/ночь`;
-  template.querySelector(`.popup__type`).textContent = TypeRusMatch[currentObject.type];
-  template.querySelector(`.popup__text--capacity`).textContent = currentObject.rooms + ` комнаты для ` + currentObject.guests + ` гостей`;
-  template.querySelector(`.popup__text--time`).textContent = `Заезд после ` + currentObject.checkin + `, выезд до ` + currentObject.checkout;
-  template.querySelector(`.popup__description`).textContent = currentObject.description;
+  document.cardElement.querySelector(`.popup__title`).textContent = currentObject.title;
+  document.cardElement.querySelector(`.popup__text--address`).textContent = currentObject.address;
+  document.cardElement.querySelector(`.popup__text--price`).textContent = currentObject.price + `₽/ночь`;
+  document.cardElement.querySelector(`.popup__type`).textContent = TypeRusMatch[currentObject.type];
+  document.cardElement.querySelector(`.popup__text--capacity`).textContent = currentObject.rooms + ` комнаты для ` + currentObject.guests + ` гостей`;
+  document.cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ` + currentObject.checkin + `, выезд до ` + currentObject.checkout;
+  document.cardElement.querySelector(`.popup__description`).textContent = currentObject.description;
 };
 
 const fillCards = function (card) {
-  const cardElement = cardTemplate.cloneNode(true);
-
-  cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
-  fillTextBlock(cardElement, card.offer);
-  delNotUseFeatures(cardElement, card.offer.features);
-  fillPhotosBlock(cardElement, card.offer.photos);
-  return cardElement;
+  document.cardElement = cardTemplate.cloneNode(true);
+  document.cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
+  fillTextBlock(card.offer);
+  delNotUseFeatures(card.offer.features);
+  fillPhotosBlock(card.offer.photos);
+  return document.cardElement;
 };
 
 cardFragment.appendChild(fillCards(mapPins[0]));
-mapArea.insertBefore(cardFragment, insertTargetElement);
+mapArea.insertBefore(cardFragment, insertTargetElement); */
+
+const form = document.querySelector(`.ad-form`);
+const formFieldsets = form.querySelectorAll(`fieldset`);
+const mainPin = map.querySelector(`.map__pin--main`);
+
+const switchDisabledValue = function (currentCollection) {
+  for (let i = 0; i < currentCollection.length; i++) {
+    currentCollection[i].toggleAttribute(`disabled`);
+  }
+};
+
+const isMainMouseButton = function (eventInfo) {
+  if (typeof eventInfo === `object`) {
+    if (eventInfo.button === 0) {
+      return true;
+    }
+  }
+  return false;
+};
+
+mainPin.addEventListener(`mousedown`, function (evt) {
+  if (isMainMouseButton(evt)) {
+    switchDisabledValue(formFieldsets);
+  }
+});
+
+switchDisabledValue(formFieldsets);
