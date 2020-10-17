@@ -16,6 +16,14 @@ const MIN_GUESTS = 1;
 const MAX_GUESTS = 10;
 const X_SHIFT = 25;
 const Y_SHIFT = 70;
+const X_DISABLED_PIN_POSITION = 575;
+const Y_DISABLED_PIN_POSITION = 375;
+const HALF_DISABLED_PIN_SIZE = 32.5;
+const X_DISABLED_PIN_CORD = X_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
+const Y_DISABLED_PIN_CORD = Y_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
+const MOVEABLE_PIN_TALE_SIZE = 22;
+const X_SHIFT_MOVEABLE_PIN = HALF_DISABLED_PIN_SIZE;
+const Y_SHIFT_MOVEABLE_PIN = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVEABLE_PIN_TALE_SIZE;
 const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const pinsList = document.querySelector(`.map__pins`);
@@ -188,7 +196,38 @@ mapArea.insertBefore(cardFragment, insertTargetElement); */
 
 const form = document.querySelector(`.ad-form`);
 const formFieldsets = form.querySelectorAll(`fieldset`);
+const addressInput = form.querySelector(`#address`);
+const capacitySelector = form.querySelector(`#capacity`);
+const roomsSelector = form.querySelector(`#room_number`);
 const mainPin = map.querySelector(`.map__pin--main`);
+
+/* capacitySelector.addEventListener(`click`, function () {
+  capacitySelector.setCustomValidity(capacitySelector.value);
+  capacitySelector.reportValidity();
+}); */
+
+const checkNotEqualsSelectorsValue = function () {
+  if (capacitySelector.value !== roomsSelector.value && !(capacitySelector.value === `0` && roomsSelector.value === `100`)) {
+    capacitySelector.setCustomValidity(`Число гостей должно быть равно числу комнат!`);
+  } else {
+    capacitySelector.setCustomValidity(``);
+  }
+  /* capacitySelector.reportValidity(); */
+};
+
+capacitySelector.addEventListener(`input`, function () {
+  checkNotEqualsSelectorsValue();
+});
+
+roomsSelector.addEventListener(`input`, function () {
+  checkNotEqualsSelectorsValue();
+});
+
+form.addEventListener(`submit`, function (evt) {
+  if (!capacitySelector.reportValidity()) {
+    evt.preventDefault();
+  }
+});
 
 const switchDisabledValue = function (currentCollection) {
   for (let i = 0; i < currentCollection.length; i++) {
@@ -205,10 +244,60 @@ const isMainMouseButton = function (eventInfo) {
   return false;
 };
 
-mainPin.addEventListener(`mousedown`, function (evt) {
-  if (isMainMouseButton(evt)) {
-    switchDisabledValue(formFieldsets);
+const isEnterPressed = function (eventInfo) {
+  if (eventInfo.key === `Enter`) {
+    return true;
   }
-});
+  return false;
+};
 
-switchDisabledValue(formFieldsets);
+const getDisabledAddress = function () {
+  addressInput.value = X_DISABLED_PIN_CORD + `, ` + Y_DISABLED_PIN_CORD;
+};
+
+const getAddress = function (x, y) {
+  const totalX = x + X_SHIFT_MOVEABLE_PIN;
+  const totalY = y + Y_SHIFT_MOVEABLE_PIN;
+  addressInput.value = totalX + `, ` + totalY;
+};
+
+const activateElements = function (evt) {
+  if (isMainMouseButton(evt) || isEnterPressed(evt)) {
+    form.classList.remove(`ad-form--disabled`);
+    getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
+    switchDisabledValue(formFieldsets);
+    checkNotEqualsSelectorsValue();
+    const mapPins = createPins();
+    map.classList.remove(`map--faded`);
+    for (let i = 0; i < mapPins.length; i++) {
+      fragment.appendChild(fillPins(mapPins[i]));
+    }
+    pinsList.appendChild(fragment);
+  }
+};
+
+const activatePage = function () {
+  mainPin.addEventListener(`mousedown`, activateElements);
+  mainPin.addEventListener(`keydown`, activateElements);
+};
+
+const removeActivateEvents = function () {
+  mainPin.removeEventListener(`mousedown`, activateElements);
+  mainPin.removeEventListener(`keydown`, activateElements);
+};
+
+const blockPage = function () {
+  getDisabledAddress();
+  switchDisabledValue(formFieldsets);
+  activatePage();
+  mainPin.addEventListener(`mousedown`, function () {
+    removeActivateEvents();
+  });
+  mainPin.addEventListener(`keydown`, function (evt) {
+    if (isEnterPressed(evt)) {
+      removeActivateEvents();
+    }
+  });
+};
+
+blockPage();
