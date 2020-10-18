@@ -19,11 +19,8 @@ const Y_SHIFT = 70;
 const X_DISABLED_PIN_POSITION = 575;
 const Y_DISABLED_PIN_POSITION = 375;
 const HALF_DISABLED_PIN_SIZE = 32.5;
-const X_DISABLED_PIN_CORD = X_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
-const Y_DISABLED_PIN_CORD = Y_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
 const MOVEABLE_PIN_TALE_SIZE = 22;
 const X_SHIFT_MOVEABLE_PIN = HALF_DISABLED_PIN_SIZE;
-const Y_SHIFT_MOVEABLE_PIN = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVEABLE_PIN_TALE_SIZE;
 const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const pinsList = document.querySelector(`.map__pins`);
@@ -200,30 +197,27 @@ const addressInput = form.querySelector(`#address`);
 const capacitySelector = form.querySelector(`#capacity`);
 const roomsSelector = form.querySelector(`#room_number`);
 const mainPin = map.querySelector(`.map__pin--main`);
+const disabledPinCordX = X_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
+const disabledPinCordY = Y_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
+const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVEABLE_PIN_TALE_SIZE;
 
-/* capacitySelector.addEventListener(`click`, function () {
-  capacitySelector.setCustomValidity(capacitySelector.value);
-  capacitySelector.reportValidity();
-}); */
-
-const checkNotEqualsSelectorsValue = function () {
-  if (capacitySelector.value !== roomsSelector.value && !(capacitySelector.value === `0` && roomsSelector.value === `100`)) {
-    capacitySelector.setCustomValidity(`Число гостей должно быть равно числу комнат!`);
-  } else {
+const onSelectorsCheck = function () {
+  if (capacitySelector.value <= roomsSelector.value && !(capacitySelector.value === `0` || roomsSelector.value === `100`)) {
     capacitySelector.setCustomValidity(``);
+  } else if (capacitySelector.value === `0` && roomsSelector.value === `100`) {
+    capacitySelector.setCustomValidity(``);
+  } else {
+    capacitySelector.setCustomValidity(`Число гостей не соответсвует числу комнат!`);
   }
-  /* capacitySelector.reportValidity(); */
+  capacitySelector.reportValidity();
 };
 
-capacitySelector.addEventListener(`input`, function () {
-  checkNotEqualsSelectorsValue();
-});
+capacitySelector.addEventListener(`input`, onSelectorsCheck);
 
-roomsSelector.addEventListener(`input`, function () {
-  checkNotEqualsSelectorsValue();
-});
+roomsSelector.addEventListener(`input`, onSelectorsCheck);
 
 form.addEventListener(`submit`, function (evt) {
+  onSelectorsCheck();
   if (!capacitySelector.reportValidity()) {
     evt.preventDefault();
   }
@@ -252,52 +246,67 @@ const isEnterPressed = function (eventInfo) {
 };
 
 const getDisabledAddress = function () {
-  addressInput.value = X_DISABLED_PIN_CORD + `, ` + Y_DISABLED_PIN_CORD;
+  addressInput.value = Math.round(disabledPinCordX) + `, ` + Math.round(disabledPinCordY);
 };
 
 const getAddress = function (x, y) {
   const totalX = x + X_SHIFT_MOVEABLE_PIN;
-  const totalY = y + Y_SHIFT_MOVEABLE_PIN;
-  addressInput.value = totalX + `, ` + totalY;
+  const totalY = y + moveablePinShiftY;
+  addressInput.value = Math.round(totalX) + `, ` + Math.round(totalY);
 };
 
-const activateElements = function (evt) {
-  if (isMainMouseButton(evt) || isEnterPressed(evt)) {
-    form.classList.remove(`ad-form--disabled`);
-    getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
-    switchDisabledValue(formFieldsets);
-    checkNotEqualsSelectorsValue();
-    const mapPins = createPins();
-    map.classList.remove(`map--faded`);
-    for (let i = 0; i < mapPins.length; i++) {
-      fragment.appendChild(fillPins(mapPins[i]));
-    }
-    pinsList.appendChild(fragment);
+const onFormElementsActivate = function () {
+  form.classList.remove(`ad-form--disabled`);
+  getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
+  switchDisabledValue(formFieldsets);
+  const mapPins = createPins();
+  map.classList.remove(`map--faded`);
+  for (let i = 0; i < mapPins.length; i++) {
+    fragment.appendChild(fillPins(mapPins[i]));
+  }
+  pinsList.appendChild(fragment);
+};
+
+const onPinKeydown = function (evt) {
+  if (isEnterPressed(evt)) {
+    onFormElementsActivate();
   }
 };
 
-const activatePage = function () {
-  mainPin.addEventListener(`mousedown`, activateElements);
-  mainPin.addEventListener(`keydown`, activateElements);
+const onPinMousedown = function (evt) {
+  if (isMainMouseButton(evt)) {
+    onFormElementsActivate();
+  }
 };
 
-const removeActivateEvents = function () {
-  mainPin.removeEventListener(`mousedown`, activateElements);
-  mainPin.removeEventListener(`keydown`, activateElements);
+const onPageActivate = function () {
+  mainPin.addEventListener(`mousedown`, onPinMousedown);
+  mainPin.addEventListener(`keydown`, onPinKeydown);
+};
+
+const onActivatedEventsRemove = function () {
+  mainPin.removeEventListener(`mousedown`, onPinMousedown);
+  mainPin.removeEventListener(`keydown`, onPinKeydown);
+};
+
+const onPinSecondKeydown = function (evt) {
+  if (isEnterPressed(evt)) {
+    onActivatedEventsRemove();
+  }
+};
+
+const onPinSecondMousedown = function (evt) {
+  if (isMainMouseButton(evt)) {
+    onActivatedEventsRemove();
+  }
 };
 
 const blockPage = function () {
   getDisabledAddress();
   switchDisabledValue(formFieldsets);
-  activatePage();
-  mainPin.addEventListener(`mousedown`, function () {
-    removeActivateEvents();
-  });
-  mainPin.addEventListener(`keydown`, function (evt) {
-    if (isEnterPressed(evt)) {
-      removeActivateEvents();
-    }
-  });
+  onPageActivate();
+  mainPin.addEventListener(`mousedown`, onPinSecondMousedown);
+  mainPin.addEventListener(`keydown`, onPinSecondKeydown);
 };
 
 blockPage();
