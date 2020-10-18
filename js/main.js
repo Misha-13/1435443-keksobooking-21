@@ -20,7 +20,6 @@ const X_DISABLED_PIN_POSITION = 575;
 const Y_DISABLED_PIN_POSITION = 375;
 const HALF_DISABLED_PIN_SIZE = 32.5;
 const MOVEABLE_PIN_TALE_SIZE = 22;
-const X_SHIFT_MOVEABLE_PIN = HALF_DISABLED_PIN_SIZE;
 const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const pinsList = document.querySelector(`.map__pins`);
@@ -202,14 +201,14 @@ const disabledPinCordY = Y_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
 const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVEABLE_PIN_TALE_SIZE;
 
 const onSelectorsCheck = function () {
-  if (capacitySelector.value <= roomsSelector.value && !(capacitySelector.value === `0` || roomsSelector.value === `100`)) {
+  const equalFlag = capacitySelector.value === `0` && roomsSelector.value === `100`;
+  if (capacitySelector.value <= roomsSelector.value && !equalFlag) {
     capacitySelector.setCustomValidity(``);
-  } else if (capacitySelector.value === `0` && roomsSelector.value === `100`) {
+  } else if (equalFlag) {
     capacitySelector.setCustomValidity(``);
   } else {
     capacitySelector.setCustomValidity(`Число гостей не соответсвует числу комнат!`);
   }
-  capacitySelector.reportValidity();
 };
 
 capacitySelector.addEventListener(`input`, onSelectorsCheck);
@@ -250,7 +249,7 @@ const getDisabledAddress = function () {
 };
 
 const getAddress = function (x, y) {
-  const totalX = x + X_SHIFT_MOVEABLE_PIN;
+  const totalX = x + HALF_DISABLED_PIN_SIZE;
   const totalY = y + moveablePinShiftY;
   addressInput.value = Math.round(totalX) + `, ` + Math.round(totalY);
 };
