@@ -20,6 +20,7 @@ const X_DISABLED_PIN_POSITION = 575;
 const Y_DISABLED_PIN_POSITION = 375;
 const HALF_DISABLED_PIN_SIZE = 32.5;
 const MOVEABLE_PIN_TALE_SIZE = 22;
+const MAIN_MOUSE_BUTTON_CODE = 0;
 const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const pinsList = document.querySelector(`.map__pins`);
@@ -257,7 +258,7 @@ const onPinKeydown = function (evt) {
 };
 
 const onPinMousedown = function (evt) {
-  if (evt.button === 0) {
+  if (evt.button === MAIN_MOUSE_BUTTON_CODE) {
     onFormElementsActivate();
   }
 };
@@ -279,7 +280,7 @@ const onPinSecondKeydown = function (evt) {
 };
 
 const onPinSecondMousedown = function (evt) {
-  if (evt.button === 0) {
+  if (evt.button === MAIN_MOUSE_BUTTON_CODE) {
     onActivatedEventsRemove();
   }
 };
