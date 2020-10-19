@@ -203,12 +203,12 @@ const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVE
 const onSelectorsCheck = function () {
   const equalFlag = capacitySelector.value === `0` && roomsSelector.value === `100`;
   if (capacitySelector.value <= roomsSelector.value && !equalFlag) {
-    capacitySelector.setCustomValidity(``);
-  } else if (equalFlag) {
-    capacitySelector.setCustomValidity(``);
-  } else {
-    capacitySelector.setCustomValidity(`Число гостей не соответсвует числу комнат!`);
+    return capacitySelector.setCustomValidity(``);
   }
+  if (equalFlag) {
+    return capacitySelector.setCustomValidity(``);
+  }
+  return capacitySelector.setCustomValidity(`Число гостей не соответсвует числу комнат!`);
 };
 
 capacitySelector.addEventListener(`input`, onSelectorsCheck);
@@ -226,22 +226,6 @@ const switchDisabledValue = function (currentCollection) {
   for (let i = 0; i < currentCollection.length; i++) {
     currentCollection[i].toggleAttribute(`disabled`);
   }
-};
-
-const isMainMouseButton = function (eventInfo) {
-  if (typeof eventInfo === `object`) {
-    if (eventInfo.button === 0) {
-      return true;
-    }
-  }
-  return false;
-};
-
-const isEnterPressed = function (eventInfo) {
-  if (eventInfo.key === `Enter`) {
-    return true;
-  }
-  return false;
 };
 
 const getDisabledAddress = function () {
@@ -267,13 +251,13 @@ const onFormElementsActivate = function () {
 };
 
 const onPinKeydown = function (evt) {
-  if (isEnterPressed(evt)) {
+  if (evt.key === `Enter`) {
     onFormElementsActivate();
   }
 };
 
 const onPinMousedown = function (evt) {
-  if (isMainMouseButton(evt)) {
+  if (evt.button === 0) {
     onFormElementsActivate();
   }
 };
@@ -289,13 +273,13 @@ const onActivatedEventsRemove = function () {
 };
 
 const onPinSecondKeydown = function (evt) {
-  if (isEnterPressed(evt)) {
+  if (evt.key === `Enter`) {
     onActivatedEventsRemove();
   }
 };
 
 const onPinSecondMousedown = function (evt) {
-  if (isMainMouseButton(evt)) {
+  if (evt.button === 0) {
     onActivatedEventsRemove();
   }
 };
