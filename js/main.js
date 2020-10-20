@@ -203,7 +203,7 @@ const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVE
 
 const onSelectorsCheck = function () {
   const equalFlag = capacitySelector.value === `0` && roomsSelector.value === `100`;
-  if (capacitySelector.value <= roomsSelector.value && !equalFlag) {
+  if (capacitySelector.value <= roomsSelector.value && capacitySelector.value !== `0` && roomsSelector.value !== `100`) {
     return capacitySelector.setCustomValidity(``);
   }
   if (equalFlag) {
