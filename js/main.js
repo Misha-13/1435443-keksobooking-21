@@ -202,11 +202,10 @@ const disabledPinCordY = Y_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
 const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVEABLE_PIN_TALE_SIZE;
 
 const onSelectorsCheck = function () {
-  const equalFlag = capacitySelector.value === `0` && roomsSelector.value === `100`;
-  if (capacitySelector.value <= roomsSelector.value && capacitySelector.value !== `0` && roomsSelector.value !== `100`) {
-    return capacitySelector.setCustomValidity(``);
-  }
-  if (equalFlag) {
+  const roomNum = +roomsSelector.value;
+  const guestNum = +capacitySelector.value;
+  const isValidChoice = roomNum === 100 ? (guestNum === 0) : (roomNum > guestNum && guestNum !== 0 || roomNum === guestNum);
+  if (isValidChoice) {
     return capacitySelector.setCustomValidity(``);
   }
   return capacitySelector.setCustomValidity(`Число гостей не соответсвует числу комнат!`);
