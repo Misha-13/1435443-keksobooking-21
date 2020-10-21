@@ -16,6 +16,11 @@ const MIN_GUESTS = 1;
 const MAX_GUESTS = 10;
 const X_SHIFT = 25;
 const Y_SHIFT = 70;
+const X_DISABLED_PIN_POSITION = 575;
+const Y_DISABLED_PIN_POSITION = 375;
+const HALF_DISABLED_PIN_SIZE = 32.5;
+const MOVEABLE_PIN_TALE_SIZE = 22;
+const MAIN_MOUSE_BUTTON_CODE = 0;
 const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const pinsList = document.querySelector(`.map__pins`);
@@ -111,21 +116,21 @@ const fillPins = function (pin) {
   return pinElement;
 };
 
-const mapPins = createPins();
+/* const mapPins = createPins();
 map.classList.remove(`map--faded`);
 for (let i = 0; i < mapPins.length; i++) {
   fragment.appendChild(fillPins(mapPins[i]));
 }
-pinsList.appendChild(fragment);
+pinsList.appendChild(fragment); */
 
-
+/*
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 const cardFragment = document.createDocumentFragment();
 const mapArea = document.querySelector(`.map`);
 const insertTargetElement = mapArea.querySelector(`.map__filters-container`);
 
-const delNotUseFeatures = function (template, currentArray) {
-  const childrenElements = template.querySelector(`.popup__features`).children;
+const delNotUseFeatures = function (currentArray) {
+  const childrenElements = document.cardElement.querySelector(`.popup__features`).children;
   for (let i = childrenElements.length - 1; i >= 0; i--) {
     const childElement = childrenElements[i];
     let existFlag = false;
@@ -146,18 +151,18 @@ const fillPhotos = function (template, photo) {
   return imgElement;
 };
 
-const fillPhotosBlock = function (template, imgArray) {
-  const imgTemplate = template.querySelector(`.popup__photos`).querySelector(`img`);
-  const imgList = template.querySelector(`.popup__photos`);
+const fillPhotosBlock = function (imgArray) {
+  const imgTemplate = document.cardElement.querySelector(`.popup__photos`).querySelector(`img`);
+  const imgList = document.cardElement.querySelector(`.popup__photos`);
   const imgFragment = document.createDocumentFragment();
-  template.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, imgArray[0]);
+  document.cardElement.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, imgArray[0]);
   for (let i = 1; i < imgArray.length; i++) {
     imgFragment.appendChild(fillPhotos(imgTemplate, imgArray[i]));
   }
   imgList.appendChild(imgFragment);
 };
 
-const fillTextBlock = function (template, currentObject) {
+const fillTextBlock = function (currentObject) {
   const TypeRusMatch = {
     palace: `Дворец`,
     flat: `Квартира`,
@@ -165,24 +170,126 @@ const fillTextBlock = function (template, currentObject) {
     bungalow: `Бунгало`
   };
 
-  template.querySelector(`.popup__title`).textContent = currentObject.title;
-  template.querySelector(`.popup__text--address`).textContent = currentObject.address;
-  template.querySelector(`.popup__text--price`).textContent = currentObject.price + `₽/ночь`;
-  template.querySelector(`.popup__type`).textContent = TypeRusMatch[currentObject.type];
-  template.querySelector(`.popup__text--capacity`).textContent = currentObject.rooms + ` комнаты для ` + currentObject.guests + ` гостей`;
-  template.querySelector(`.popup__text--time`).textContent = `Заезд после ` + currentObject.checkin + `, выезд до ` + currentObject.checkout;
-  template.querySelector(`.popup__description`).textContent = currentObject.description;
+  document.cardElement.querySelector(`.popup__title`).textContent = currentObject.title;
+  document.cardElement.querySelector(`.popup__text--address`).textContent = currentObject.address;
+  document.cardElement.querySelector(`.popup__text--price`).textContent = currentObject.price + `₽/ночь`;
+  document.cardElement.querySelector(`.popup__type`).textContent = TypeRusMatch[currentObject.type];
+  document.cardElement.querySelector(`.popup__text--capacity`).textContent = currentObject.rooms + ` комнаты для ` + currentObject.guests + ` гостей`;
+  document.cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ` + currentObject.checkin + `, выезд до ` + currentObject.checkout;
+  document.cardElement.querySelector(`.popup__description`).textContent = currentObject.description;
 };
 
 const fillCards = function (card) {
-  const cardElement = cardTemplate.cloneNode(true);
-
-  cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
-  fillTextBlock(cardElement, card.offer);
-  delNotUseFeatures(cardElement, card.offer.features);
-  fillPhotosBlock(cardElement, card.offer.photos);
-  return cardElement;
+  document.cardElement = cardTemplate.cloneNode(true);
+  document.cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
+  fillTextBlock(card.offer);
+  delNotUseFeatures(card.offer.features);
+  fillPhotosBlock(card.offer.photos);
+  return document.cardElement;
 };
 
 cardFragment.appendChild(fillCards(mapPins[0]));
-mapArea.insertBefore(cardFragment, insertTargetElement);
+mapArea.insertBefore(cardFragment, insertTargetElement); */
+
+const form = document.querySelector(`.ad-form`);
+const formFieldsets = form.querySelectorAll(`fieldset`);
+const addressInput = form.querySelector(`#address`);
+const capacitySelector = form.querySelector(`#capacity`);
+const roomsSelector = form.querySelector(`#room_number`);
+const mainPin = map.querySelector(`.map__pin--main`);
+const disabledPinCordX = X_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
+const disabledPinCordY = Y_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
+const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVEABLE_PIN_TALE_SIZE;
+
+const onSelectorsCheck = function () {
+  const roomNum = +roomsSelector.value;
+  const guestNum = +capacitySelector.value;
+  const isValidChoice = roomNum === 100 ? (guestNum === 0) : (roomNum > guestNum && guestNum !== 0 || roomNum === guestNum);
+  if (isValidChoice) {
+    return capacitySelector.setCustomValidity(``);
+  }
+  return capacitySelector.setCustomValidity(`Число гостей не соответсвует числу комнат!`);
+};
+
+capacitySelector.addEventListener(`input`, onSelectorsCheck);
+
+roomsSelector.addEventListener(`input`, onSelectorsCheck);
+
+form.addEventListener(`submit`, function (evt) {
+  onSelectorsCheck();
+  if (!capacitySelector.reportValidity()) {
+    evt.preventDefault();
+  }
+});
+
+const switchDisabledValue = function (currentCollection) {
+  for (let i = 0; i < currentCollection.length; i++) {
+    currentCollection[i].toggleAttribute(`disabled`);
+  }
+};
+
+const getDisabledAddress = function () {
+  addressInput.value = Math.round(disabledPinCordX) + `, ` + Math.round(disabledPinCordY);
+};
+
+const getAddress = function (x, y) {
+  const totalX = x + HALF_DISABLED_PIN_SIZE;
+  const totalY = y + moveablePinShiftY;
+  addressInput.value = Math.round(totalX) + `, ` + Math.round(totalY);
+};
+
+const onFormElementsActivate = function () {
+  form.classList.remove(`ad-form--disabled`);
+  getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
+  switchDisabledValue(formFieldsets);
+  const mapPins = createPins();
+  map.classList.remove(`map--faded`);
+  for (let i = 0; i < mapPins.length; i++) {
+    fragment.appendChild(fillPins(mapPins[i]));
+  }
+  pinsList.appendChild(fragment);
+};
+
+const onPinKeydown = function (evt) {
+  if (evt.key === `Enter`) {
+    onFormElementsActivate();
+  }
+};
+
+const onPinMousedown = function (evt) {
+  if (evt.button === MAIN_MOUSE_BUTTON_CODE) {
+    onFormElementsActivate();
+  }
+};
+
+const onPageActivate = function () {
+  mainPin.addEventListener(`mousedown`, onPinMousedown);
+  mainPin.addEventListener(`keydown`, onPinKeydown);
+};
+
+const onActivatedEventsRemove = function () {
+  mainPin.removeEventListener(`mousedown`, onPinMousedown);
+  mainPin.removeEventListener(`keydown`, onPinKeydown);
+};
+
+const onPinSecondKeydown = function (evt) {
+  if (evt.key === `Enter`) {
+    onActivatedEventsRemove();
+  }
+};
+
+const onPinSecondMousedown = function (evt) {
+  if (evt.button === MAIN_MOUSE_BUTTON_CODE) {
+    onActivatedEventsRemove();
+  }
+};
+
+const blockPage = function () {
+  getDisabledAddress();
+  switchDisabledValue(formFieldsets);
+  onPageActivate();
+  mainPin.addEventListener(`mousedown`, onPinSecondMousedown);
+  mainPin.addEventListener(`keydown`, onPinSecondKeydown);
+};
+
+blockPage();
