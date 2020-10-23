@@ -292,6 +292,11 @@ const setPinEvent = function (currentArr, exception) {
   }
 };
 
+const onFormAfterReset = function () {
+  onRealtySelectorCheck();
+  getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
+};
+
 const onFormElementsActivate = function () {
   form.classList.remove(`ad-form--disabled`);
   getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
@@ -306,6 +311,9 @@ const onFormElementsActivate = function () {
   setPinEvent(selectingPin, `map__pin--main`);
   realtyType.addEventListener(`input`, onRealtySelectorCheck);
   setTimeEvent();
+  form.addEventListener(`reset`, function () {
+    setTimeout(onFormAfterReset, 100);
+  });
 };
 
 const onPinKeydown = function (evt) {
