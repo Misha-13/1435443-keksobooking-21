@@ -195,8 +195,8 @@ const price = form.querySelector(`#price`);
 const timein = form.querySelector(`#timein`);
 const timeout = form.querySelector(`#timeout`);
 const KeysList = {
-  ESCAPE: true,
-  ENTER: true
+  ESCAPE: `Escape`,
+  ENTER: `Enter`
 };
 const TypeMinCostMatch = {
   PALACE: 10000,
@@ -257,7 +257,7 @@ const getAddress = function (x, y) {
 };
 
 const onInfoPinKeydown = function (evt) {
-  if (KeysList[evt.key.toUpperCase()]) {
+  if (evt.key === KeysList.ESCAPE) {
     removeExistPin();
     document.removeEventListener(`keydown`, onInfoPinKeydown);
   }
@@ -278,27 +278,25 @@ const setExitButtonEvent = function () {
   });
 };
 
-const onPinEventSet = function (currentArray, exception) {
+const onInfoPinClick = function (counter, exceptionCounter) {
+  removeExistPin();
+  cardFragment.appendChild(fillCards(document.mapPins[counter - exceptionCounter]));
+  mapArea.insertBefore(cardFragment, insertTargetElement);
+  setExitButtonEvent();
+  document.addEventListener(`keydown`, onInfoPinKeydown);
+};
+
+const renderPinCard = function (currentArray, exception) {
   let exceptionCounter = 0;
   for (let i = 0; i < currentArray.length; i++) {
     if (!currentArray[i].classList.contains(exception)) {
       currentArray[i].addEventListener(`click`, function () {
-        removeExistPin();
-        cardFragment.appendChild(fillCards(document.mapPins[i - exceptionCounter]));
-        mapArea.insertBefore(cardFragment, insertTargetElement);
-        setExitButtonEvent();
-        document.addEventListener(`keydown`, onInfoPinKeydown);
+        onInfoPinClick(i, exceptionCounter);
       });
     } else {
       exceptionCounter++;
     }
   }
-};
-
-const setPinEvent = function () {
-  const selectingPin = map.querySelectorAll(`.map__pin`);
-  const exception = `map__pin--main`;
-  onPinEventSet(selectingPin, exception);
 };
 
 const onFormAfterReset = function () {
@@ -312,13 +310,15 @@ const activateElements = function () {
 };
 
 const renderPins = function () {
+  const EXCEPTION = `map__pin--main`;
   document.mapPins = createPins();
   map.classList.remove(`map--faded`);
   for (let i = 0; i < document.mapPins.length; i++) {
     fragment.appendChild(fillPins(document.mapPins[i]));
   }
   pinsList.appendChild(fragment);
-  setPinEvent();
+  const selectingPin = map.querySelectorAll(`.map__pin`);
+  renderPinCard(selectingPin, EXCEPTION);
 };
 
 const setValidation = function () {
@@ -337,7 +337,7 @@ const activateForm = function () {
 };
 
 const onPinKeydown = function (evt) {
-  if (KeysList[evt.key.toUpperCase()]) {
+  if (evt.key === KeysList.ENTER) {
     activateForm();
   }
 };
@@ -359,7 +359,7 @@ const onActivatedEventsRemove = function () {
 };
 
 const onPinSecondKeydown = function (evt) {
-  if (KeysList[evt.key.toUpperCase()]) {
+  if (evt.key === KeysList.ENTER) {
     onActivatedEventsRemove();
   }
 };
