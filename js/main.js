@@ -194,13 +194,16 @@ const realtyType = form.querySelector(`#type`);
 const price = form.querySelector(`#price`);
 const timein = form.querySelector(`#timein`);
 const timeout = form.querySelector(`#timeout`);
-const TypeMinCostMatch = {
-  palace: 10000,
-  flat: 1000,
-  house: 5000,
-  bungalow: 0
+const KeysList = {
+  ESCAPE: true,
+  ENTER: true
 };
-let selectingPin = [];
+const TypeMinCostMatch = {
+  PALACE: 10000,
+  FLAT: 1000,
+  HOUSE: 5000,
+  BUNGALOW: 0
+};
 
 const setTimeEvent = function () {
   timein.addEventListener(`input`, function () {
@@ -212,8 +215,8 @@ const setTimeEvent = function () {
 };
 
 const onRealtySelectorCheck = function () {
-  price.setAttribute(`min`, TypeMinCostMatch[realtyType.value]);
-  price.setAttribute(`placeholder`, TypeMinCostMatch[realtyType.value]);
+  price.setAttribute(`min`, TypeMinCostMatch[realtyType.value.toUpperCase()]);
+  price.setAttribute(`placeholder`, TypeMinCostMatch[realtyType.value.toUpperCase()]);
 };
 
 const onSelectorsCheck = function () {
@@ -254,36 +257,36 @@ const getAddress = function (x, y) {
 };
 
 const onInfoPinKeydown = function (evt) {
-  if (evt.key === `Escape`) {
-    document.mapAreaElement.remove();
+  if (KeysList[evt.key.toUpperCase()]) {
+    removeExistPin();
     document.removeEventListener(`keydown`, onInfoPinKeydown);
   }
 };
 
 const removeExistPin = function () {
-  document.mapAreaElement = mapArea.querySelector(`.map__card`);
-  if (document.mapAreaElement) {
-    document.mapAreaElement.remove();
+  const mapAreaElement = mapArea.querySelector(`.map__card`);
+  if (mapAreaElement) {
+    mapAreaElement.remove();
   }
 };
 
-const onExitButtonClick = function () {
-  document.mapAreaElement = mapArea.querySelector(`.map__card`);
-  const closePopupButton = document.mapAreaElement.querySelector(`.popup__close`);
+const setExitButtonEvent = function () {
+  const mapAreaElement = mapArea.querySelector(`.map__card`);
+  const closePopupButton = mapAreaElement.querySelector(`.popup__close`);
   closePopupButton.addEventListener(`click`, function () {
-    document.mapAreaElement.remove();
+    mapAreaElement.remove();
   });
 };
 
-const setPinEvent = function (currentArr, exception) {
+const onPinEventSet = function (currentArray, exception) {
   let exceptionCounter = 0;
-  for (let i = 0; i < currentArr.length; i++) {
-    if (!currentArr[i].classList.contains(exception)) {
-      currentArr[i].addEventListener(`click`, function () {
+  for (let i = 0; i < currentArray.length; i++) {
+    if (!currentArray[i].classList.contains(exception)) {
+      currentArray[i].addEventListener(`click`, function () {
         removeExistPin();
         cardFragment.appendChild(fillCards(document.mapPins[i - exceptionCounter]));
         mapArea.insertBefore(cardFragment, insertTargetElement);
-        onExitButtonClick();
+        setExitButtonEvent();
         document.addEventListener(`keydown`, onInfoPinKeydown);
       });
     } else {
@@ -292,23 +295,33 @@ const setPinEvent = function (currentArr, exception) {
   }
 };
 
+const setPinEvent = function () {
+  const selectingPin = map.querySelectorAll(`.map__pin`);
+  const exception = `map__pin--main`;
+  onPinEventSet(selectingPin, exception);
+};
+
 const onFormAfterReset = function () {
   onRealtySelectorCheck();
   getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
 };
 
-const onFormElementsActivate = function () {
-  form.classList.remove(`ad-form--disabled`);
+const activateElements = function () {
   getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
   switchDisabledValue(formFieldsets);
+};
+
+const renderPins = function () {
   document.mapPins = createPins();
   map.classList.remove(`map--faded`);
   for (let i = 0; i < document.mapPins.length; i++) {
     fragment.appendChild(fillPins(document.mapPins[i]));
   }
   pinsList.appendChild(fragment);
-  selectingPin = map.querySelectorAll(`.map__pin`);
-  setPinEvent(selectingPin, `map__pin--main`);
+  setPinEvent();
+};
+
+const setValidation = function () {
   realtyType.addEventListener(`input`, onRealtySelectorCheck);
   setTimeEvent();
   form.addEventListener(`reset`, function () {
@@ -316,15 +329,22 @@ const onFormElementsActivate = function () {
   });
 };
 
+const activateForm = function () {
+  form.classList.remove(`ad-form--disabled`);
+  activateElements();
+  renderPins();
+  setValidation();
+};
+
 const onPinKeydown = function (evt) {
-  if (evt.key === `Enter`) {
-    onFormElementsActivate();
+  if (KeysList[evt.key.toUpperCase()]) {
+    activateForm();
   }
 };
 
 const onPinMousedown = function (evt) {
   if (evt.button === MAIN_MOUSE_BUTTON_CODE) {
-    onFormElementsActivate();
+    activateForm();
   }
 };
 
@@ -339,7 +359,7 @@ const onActivatedEventsRemove = function () {
 };
 
 const onPinSecondKeydown = function (evt) {
-  if (evt.key === `Enter`) {
+  if (KeysList[evt.key.toUpperCase()]) {
     onActivatedEventsRemove();
   }
 };
