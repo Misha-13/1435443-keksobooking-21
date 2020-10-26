@@ -21,6 +21,7 @@ const Y_DISABLED_PIN_POSITION = 375;
 const HALF_DISABLED_PIN_SIZE = 32.5;
 const MOVEABLE_PIN_TALE_SIZE = 22;
 const MAIN_MOUSE_BUTTON_CODE = 0;
+const EXCEPTION = `map__pin--main`;
 const map = document.querySelector(`.map`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const pinsList = document.querySelector(`.map__pins`);
@@ -278,20 +279,22 @@ const setExitButtonEvent = function () {
   });
 };
 
-const onInfoPinClick = function (counter, exceptionCounter) {
+const showPinsCard = function (pin) {
   removeExistPin();
-  cardFragment.appendChild(fillCards(document.mapPins[counter - exceptionCounter]));
+  cardFragment.appendChild(fillCards(pin));
   mapArea.insertBefore(cardFragment, insertTargetElement);
   setExitButtonEvent();
   document.addEventListener(`keydown`, onInfoPinKeydown);
 };
 
-const renderPinCard = function (currentArray, exception) {
+const renderPinCard = function (pinsArray) {
+  const mapPinsList = map.querySelectorAll(`.map__pin`);
   let exceptionCounter = 0;
-  for (let i = 0; i < currentArray.length; i++) {
-    if (!currentArray[i].classList.contains(exception)) {
-      currentArray[i].addEventListener(`click`, function () {
-        onInfoPinClick(i, exceptionCounter);
+  for (let i = 0; i < mapPinsList.length; i++) {
+    if (!mapPinsList[i].classList.contains(EXCEPTION)) {
+      const currentPin = pinsArray[i - exceptionCounter];
+      mapPinsList[i].addEventListener(`click`, function () {
+        showPinsCard(currentPin);
       });
     } else {
       exceptionCounter++;
@@ -310,15 +313,13 @@ const activateElements = function () {
 };
 
 const renderPins = function () {
-  const EXCEPTION = `map__pin--main`;
-  document.mapPins = createPins();
+  const mapPins = createPins();
   map.classList.remove(`map--faded`);
-  for (let i = 0; i < document.mapPins.length; i++) {
-    fragment.appendChild(fillPins(document.mapPins[i]));
+  for (let i = 0; i < mapPins.length; i++) {
+    fragment.appendChild(fillPins(mapPins[i]));
   }
   pinsList.appendChild(fragment);
-  const selectingPin = map.querySelectorAll(`.map__pin`);
-  renderPinCard(selectingPin, EXCEPTION);
+  renderPinCard(mapPins);
 };
 
 const setValidation = function () {
