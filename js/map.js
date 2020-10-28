@@ -67,15 +67,17 @@
     }
   };
 
-  window.map = {
-    renderPins() {
-      const mapPins = window.data.createPins();
-      mapArea.classList.remove(`map--faded`);
-      for (let i = 0; i < mapPins.length; i++) {
-        fragment.appendChild(fillPins(mapPins[i]));
-      }
-      pinsList.appendChild(fragment);
-      renderPinCard(mapPins);
+  const renderPins = function () {
+    const mapPins = window.data.createPins();
+    mapArea.classList.remove(`map--faded`);
+    for (let i = 0; i < mapPins.length; i++) {
+      fragment.appendChild(fillPins(mapPins[i]));
     }
+    pinsList.appendChild(fragment);
+    renderPinCard(mapPins);
+  };
+
+  window.map = {
+    renderPins
   };
 })();

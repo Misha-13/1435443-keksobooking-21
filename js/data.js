@@ -63,37 +63,39 @@
     return randomArr;
   };
 
-  window.data = {
-    createPins(elementQuantity = 8) {
-      let pins = [];
-      const avatars = generateAvatarsArr();
-      for (let i = 0; i < elementQuantity; i++) {
-        const x = createValueInRange(MIN_X, MAX_X);
-        const y = createValueInRange(MIN_Y, MAX_Y);
-        pins.push({
-          'author': {
-            'avatar': avatars[i]
-          },
-          'offer': {
-            'title': `Тестовая строка заголовка ` + i,
-            'address': x + `, ` + y,
-            'price': createValueInRange(MIN_PRICE, MAX_PRICE),
-            'type': getElementByRandomIndex(REALTY_TYPES),
-            'rooms': createValueInRange(MIN_ROOMS, MAX_ROOMS),
-            'guests': createValueInRange(MIN_GUESTS, MAX_GUESTS),
-            'checkin': getElementByRandomIndex(TIME_BOUNDS),
-            'checkout': getElementByRandomIndex(TIME_BOUNDS),
-            'features': generateRandomLenghtArr(FEATURES),
-            'description': `Тестовое описание ` + i,
-            'photos': generateRandomLenghtArr(PHOTOS)
-          },
-          'location': {
-            'x': x,
-            'y': y,
-          }
-        });
-      }
-      return pins;
+  const createPins = function (elementQuantity = 8) {
+    let pins = [];
+    const avatars = generateAvatarsArr();
+    for (let i = 0; i < elementQuantity; i++) {
+      const x = createValueInRange(MIN_X, MAX_X);
+      const y = createValueInRange(MIN_Y, MAX_Y);
+      pins.push({
+        'author': {
+          'avatar': avatars[i]
+        },
+        'offer': {
+          'title': `Тестовая строка заголовка ` + i,
+          'address': x + `, ` + y,
+          'price': createValueInRange(MIN_PRICE, MAX_PRICE),
+          'type': getElementByRandomIndex(REALTY_TYPES),
+          'rooms': createValueInRange(MIN_ROOMS, MAX_ROOMS),
+          'guests': createValueInRange(MIN_GUESTS, MAX_GUESTS),
+          'checkin': getElementByRandomIndex(TIME_BOUNDS),
+          'checkout': getElementByRandomIndex(TIME_BOUNDS),
+          'features': generateRandomLenghtArr(FEATURES),
+          'description': `Тестовое описание ` + i,
+          'photos': generateRandomLenghtArr(PHOTOS)
+        },
+        'location': {
+          'x': x,
+          'y': y,
+        }
+      });
     }
+    return pins;
+  };
+
+  window.data = {
+    createPins
   };
 })();

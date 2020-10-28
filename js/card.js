@@ -53,14 +53,16 @@
     }
   };
 
+  const fillCards = function (card) {
+    document.cardElement = cardTemplate.cloneNode(true);
+    document.cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
+    fillTextBlock(card.offer);
+    delNotUseFeatures(card.offer.features);
+    fillPhotosBlock(card.offer.photos);
+    return document.cardElement;
+  };
+
   window.card = {
-    fillCards(card) {
-      document.cardElement = cardTemplate.cloneNode(true);
-      document.cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
-      fillTextBlock(card.offer);
-      delNotUseFeatures(card.offer.features);
-      fillPhotosBlock(card.offer.photos);
-      return document.cardElement;
-    }
+    fillCards
   };
 })();

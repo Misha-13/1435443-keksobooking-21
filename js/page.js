@@ -126,14 +126,16 @@
     }
   });
 
+  const blockPage = function () {
+    getDisabledAddress();
+    switchDisabledValue(formFieldsets);
+    onPageActivate();
+    mainPin.addEventListener(`mousedown`, onPinSecondMousedown);
+    mainPin.addEventListener(`keydown`, onPinSecondKeydown);
+    onRealtySelectorCheck();
+  };
+
   window.page = {
-    blockPage() {
-      getDisabledAddress();
-      switchDisabledValue(formFieldsets);
-      onPageActivate();
-      mainPin.addEventListener(`mousedown`, onPinSecondMousedown);
-      mainPin.addEventListener(`keydown`, onPinSecondKeydown);
-      onRealtySelectorCheck();
-    }
+    blockPage
   };
 })();
