@@ -40,16 +40,8 @@
     addressInput.value = Math.round(totalX) + `, ` + Math.round(totalY);
   };
 
-  /* const getAddress = function (x, y) {
-    const totalX = x + HALF_DISABLED_PIN_SIZE;
-    const totalY = y + moveablePinShiftY;
-    const grandTotal = Math.round(totalX) + `, ` + Math.round(totalY);
-    return grandTotal;
-  }; */
-
   const activateElements = function () {
     getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
-    /* addressInput.value = getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION); */
     switchDisabledValue(formFieldsets);
   };
 
@@ -70,7 +62,6 @@
   const onFormAfterReset = function () {
     onRealtySelectorCheck();
     getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
-    /* addressInput.value = getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION); */
   };
 
   const setValidation = function () {
