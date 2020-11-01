@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  const X_DISABLED_PIN_POSITION = 575;
+  const X_DISABLED_PIN_POSITION = 570;
   const Y_DISABLED_PIN_POSITION = 375;
   const HALF_DISABLED_PIN_SIZE = 32.5;
   const MOVEABLE_PIN_TALE_SIZE = 22;
@@ -92,9 +92,11 @@
     mainPin.addEventListener(`keydown`, onPinKeydown);
   };
 
-  const onActivatedEventsRemove = function () {
+  const onActivatedEventsRemove = function (evt) {
     mainPin.removeEventListener(`mousedown`, onPinMousedown);
     mainPin.removeEventListener(`keydown`, onPinKeydown);
+    mainPin.removeEventListener(`mousedown`, onPinSecondMousedown);
+    window.pin.movePin(evt);
   };
 
   const onPinSecondKeydown = function (evt) {
@@ -136,6 +138,7 @@
   };
 
   window.page = {
+    getAddress,
     blockPage
   };
 })();
