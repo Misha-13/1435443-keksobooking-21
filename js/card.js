@@ -11,13 +11,17 @@
 
   const fillPhotosBlock = function (imgArray) {
     const imgTemplate = document.cardElement.querySelector(`.popup__photos`).querySelector(`img`);
-    const imgList = document.cardElement.querySelector(`.popup__photos`);
-    const imgFragment = document.createDocumentFragment();
-    document.cardElement.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, imgArray[0]);
-    for (let i = 1; i < imgArray.length; i++) {
-      imgFragment.appendChild(fillPhotos(imgTemplate, imgArray[i]));
+    if (imgArray.length > 0) {
+      const imgList = document.cardElement.querySelector(`.popup__photos`);
+      const imgFragment = document.createDocumentFragment();
+      document.cardElement.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, imgArray[0]);
+      for (let i = 1; i < imgArray.length; i++) {
+        imgFragment.appendChild(fillPhotos(imgTemplate, imgArray[i]));
+      }
+      imgList.appendChild(imgFragment);
+    } else {
+      document.cardElement.querySelector(`.popup__photos`).querySelector(`img`).remove();
     }
-    imgList.appendChild(imgFragment);
   };
 
   const fillTextBlock = function (currentObject) {

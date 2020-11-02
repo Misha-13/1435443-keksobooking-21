@@ -67,14 +67,17 @@
     }
   };
 
-  const renderPins = function () {
-    const mapPins = window.data.createPins();
+  const returnPins = function (arr) {
     mapArea.classList.remove(`map--faded`);
-    for (let i = 0; i < mapPins.length; i++) {
-      fragment.appendChild(fillPins(mapPins[i]));
+    for (let i = 0; i < arr.length; i++) {
+      fragment.appendChild(fillPins(arr[i]));
     }
     pinsList.appendChild(fragment);
-    renderPinCard(mapPins);
+    renderPinCard(arr);
+  };
+
+  const renderPins = function () {
+    window.load.getData(returnPins, window.error.showError);
   };
 
   window.map = {
