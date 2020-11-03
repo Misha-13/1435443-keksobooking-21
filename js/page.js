@@ -59,6 +59,7 @@
   };
 
   const onFormAfterReset = function () {
+    const filter = document.querySelector(`.map__filters`);
     onRealtySelectorCheck();
     mainPin.style.left = X_DISABLED_PIN_POSITION + `px`;
     mainPin.style.top = Y_DISABLED_PIN_POSITION + `px`;
@@ -66,6 +67,7 @@
     document.querySelector(`.map`).classList.add(`map--faded`);
     window.map.removeExistPin();
     window.map.removePins();
+    filter.reset();
     blockPage();
   };
 
