@@ -25,7 +25,9 @@
   const removeExistPin = function () {
     const mapAreaElement = mapArea.querySelector(`.map__card`);
     if (mapAreaElement) {
+      const activatedPin = mapArea.querySelector(`.map__pin--active`);
       mapAreaElement.remove();
+      activatedPin.classList.remove(`map__pin--active`);
     }
   };
 
@@ -40,7 +42,7 @@
     const mapAreaElement = mapArea.querySelector(`.map__card`);
     const closePopupButton = mapAreaElement.querySelector(`.popup__close`);
     closePopupButton.addEventListener(`click`, function () {
-      mapAreaElement.remove();
+      removeExistPin();
     });
   };
 
@@ -60,9 +62,19 @@
         const currentPin = pinsArray[i - exceptionCounter];
         mapPinsList[i].addEventListener(`click`, function () {
           showPinsCard(currentPin);
+          mapPinsList[i].classList.add(`map__pin--active`);
         });
       } else {
         exceptionCounter++;
+      }
+    }
+  };
+
+  const removePins = function () {
+    const mapPinsList = mapArea.querySelectorAll(`.map__pin`);
+    for (let i = mapPinsList.length - 1; i > 0; i--) {
+      if (!mapPinsList[i].classList.contains(EXCEPTION)) {
+        mapPinsList[i].remove();
       }
     }
   };
@@ -81,6 +93,8 @@
   };
 
   window.map = {
-    renderPins
+    renderPins,
+    removeExistPin,
+    removePins
   };
 })();

@@ -41,7 +41,6 @@
   };
 
   const activateElements = function () {
-    getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
     switchDisabledValue(formFieldsets);
   };
 
@@ -61,15 +60,18 @@
 
   const onFormAfterReset = function () {
     onRealtySelectorCheck();
-    getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
+    mainPin.style.left = X_DISABLED_PIN_POSITION + `px`;
+    mainPin.style.top = Y_DISABLED_PIN_POSITION + `px`;
+    form.classList.add(`ad-form--disabled`);
+    document.querySelector(`.map`).classList.add(`map--faded`);
+    window.map.removeExistPin();
+    window.map.removePins();
+    blockPage();
   };
 
   const setValidation = function () {
     realtyType.addEventListener(`input`, onRealtySelectorCheck);
     setTimeEvent();
-    form.addEventListener(`reset`, function () {
-      setTimeout(onFormAfterReset, 100);
-    });
   };
 
   const activateForm = function () {
@@ -87,16 +89,15 @@
     window.utility.isMainMouseEvent(evt, activateForm);
   };
 
-  const onPageActivate = function () {
+  const activatePage = function () {
     mainPin.addEventListener(`mousedown`, onPinMousedown);
     mainPin.addEventListener(`keydown`, onPinKeydown);
   };
 
-  const onActivatedEventsRemove = function (evt) {
+  const onActivatedEventsRemove = function () {
     mainPin.removeEventListener(`mousedown`, onPinMousedown);
     mainPin.removeEventListener(`keydown`, onPinKeydown);
     mainPin.removeEventListener(`mousedown`, onPinSecondMousedown);
-    window.pin.movePin(evt);
   };
 
   const onPinSecondKeydown = function (evt) {
@@ -122,16 +123,24 @@
   roomsSelector.addEventListener(`input`, onSelectorsCheck);
 
   form.addEventListener(`submit`, function (evt) {
-    onSelectorsCheck();
     if (!capacitySelector.reportValidity()) {
       evt.preventDefault();
+    } else {
+      window.upload.uploadData(new FormData(form), function () {
+        form.reset();
+      });
+      evt.preventDefault();
     }
+  });
+
+  form.addEventListener(`reset`, function () {
+    setTimeout(onFormAfterReset, 100);
   });
 
   const blockPage = function () {
     getDisabledAddress();
     switchDisabledValue(formFieldsets);
-    onPageActivate();
+    activatePage();
     mainPin.addEventListener(`mousedown`, onPinSecondMousedown);
     mainPin.addEventListener(`keydown`, onPinSecondKeydown);
     onRealtySelectorCheck();
