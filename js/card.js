@@ -3,13 +3,13 @@
 (function () {
   const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
 
-  const fillPhotos = function (template, photo) {
+  const fillPhotos = (template, photo) => {
     const imgElement = template.cloneNode(true);
     imgElement.setAttribute(`src`, photo);
     return imgElement;
   };
 
-  const fillPhotosBlock = function (imgArray) {
+  const fillPhotosBlock = (imgArray) => {
     const imgTemplate = document.cardElement.querySelector(`.popup__photos`).querySelector(`img`);
     if (imgArray.length > 0) {
       const imgList = document.cardElement.querySelector(`.popup__photos`);
@@ -24,7 +24,7 @@
     }
   };
 
-  const fillTextBlock = function (currentObject) {
+  const fillTextBlock = (currentObject) => {
     const TypeRusMatch = {
       palace: `Дворец`,
       flat: `Квартира`,
@@ -41,7 +41,7 @@
     document.cardElement.querySelector(`.popup__description`).textContent = currentObject.description;
   };
 
-  const delNotUseFeatures = function (currentArray) {
+  const delNotUseFeatures = (currentArray) => {
     const childrenElements = document.cardElement.querySelector(`.popup__features`).children;
     for (let i = childrenElements.length - 1; i >= 0; i--) {
       const childElement = childrenElements[i];
@@ -57,7 +57,7 @@
     }
   };
 
-  const fillCards = function (card) {
+  const fillCards = (card) => {
     document.cardElement = cardTemplate.cloneNode(true);
     document.cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
     fillTextBlock(card.offer);

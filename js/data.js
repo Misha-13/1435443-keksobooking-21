@@ -16,7 +16,7 @@
   const MIN_GUESTS = 1;
   const MAX_GUESTS = 10;
 
-  const generateIndices = function (iteration, exitValue = 1) {
+  const generateIndices = (iteration, exitValue = 1) => {
     let indices = [];
     while (indices.length < iteration) {
       const randomIndex = Math.round(Math.random() * iteration);
@@ -30,7 +30,7 @@
     return indices;
   };
 
-  const generateAvatarsArr = function (iteration = 8) {
+  const generateAvatarsArr = (iteration = 8) => {
     let avatars = [];
     const imgIndices = generateIndices(iteration);
     for (let i = 0; i < iteration; i++) {
@@ -39,22 +39,22 @@
     return avatars;
   };
 
-  const getRandomElement = function (currentArray) {
+  const getRandomElement = (currentArray) => {
     const maxIndex = currentArray.length - 1;
     return Math.round(Math.random() * maxIndex);
   };
 
-  const getElementByRandomIndex = function (currentArray) {
+  const getElementByRandomIndex = (currentArray) => {
     const index = getRandomElement(currentArray);
     return currentArray[index];
   };
 
-  const createValueInRange = function (minBound, maxBound) {
+  const createValueInRange = (minBound, maxBound) => {
     const coordinate = Math.round(Math.random() * (maxBound - minBound) + minBound);
     return coordinate;
   };
 
-  const generateRandomLenghtArr = function (currentArray) {
+  const generateRandomLenghtArr = (currentArray) => {
     let randomArr = [];
     const randomArrLength = getRandomElement(currentArray);
     for (let i = 0; i <= randomArrLength; i++) {
@@ -63,7 +63,7 @@
     return randomArr;
   };
 
-  const createPins = function (elementQuantity = 8) {
+  const createPins = (elementQuantity = 8) => {
     let pins = [];
     const avatars = generateAvatarsArr();
     for (let i = 0; i < elementQuantity; i++) {

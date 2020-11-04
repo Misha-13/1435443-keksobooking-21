@@ -1,18 +1,20 @@
 'use strict';
 
 (function () {
-  const showUploadInfo = function (windowId) {
-    const main = document.querySelector(`main`);
+  const main = document.querySelector(`main`);
+
+  const showUploadInfo = (windowId) => {
     const msgTemplate = document.querySelector(`#` + windowId).content.querySelector(`.` + windowId);
     const msgWindow = msgTemplate.cloneNode(true);
-    msgWindow.addEventListener(`click`, function () {
-      msgWindow.remove();
-    });
 
-    const onMsgKeyDown = function (evt) {
-      window.utility.isEscapeEvent(evt, function () {
-        msgWindow.remove();
-      });
+    const onMsgWindowRemove = () => {
+      msgWindow.remove();
+    };
+
+    msgWindow.addEventListener(`click`, onMsgWindowRemove);
+
+    const onMsgKeyDown = (evt) => {
+      window.utility.isEscapeEvent(evt, onMsgWindowRemove);
       document.removeEventListener(`keydown`, onMsgKeyDown);
     };
 
@@ -20,8 +22,8 @@
 
     if (windowId === `error`) {
       const errorButton = msgWindow.querySelector(`.error__button`);
-      const onErrorButtonClick = function () {
-        msgWindow.remove();
+      const onErrorButtonClick = () => {
+        onMsgWindowRemove();
         errorButton.removeEventListener(`click`, onErrorButtonClick);
       };
       errorButton.addEventListener(`click`, onErrorButtonClick);
@@ -30,26 +32,20 @@
     main.prepend(msgWindow);
   };
 
-  const uploadData = function (data, onSuccess) {
-    const StatusCode = {
-      OK: 200,
-      BAD_REQUEST: 400,
-      NOT_FOUND: 404
-    };
+  const uploadData = (data, onSuccess) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = `json`;
-    xhr.addEventListener(`load`, function () {
-      if (xhr.status === StatusCode.OK) {
+    xhr.addEventListener(`load`, () => {
+      const isSuccess = (xhr.status === window.utility.StatusCode.OK);
+      if (isSuccess) {
         onSuccess();
-        showUploadInfo(`success`);
-      } else {
-        showUploadInfo(`error`);
       }
+      showUploadInfo(isSuccess ? `success` : `error`);
     });
-    xhr.addEventListener(`error`, function () {
+    xhr.addEventListener(`error`, () => {
       showUploadInfo(`error`);
     });
-    xhr.open(`POST`, `https://21.javascript.pages.academy/keksobooking`);
+    xhr.open(window.utility.SERVER_REQUEST.post.method, window.utility.SERVER_REQUEST.post.url);
     xhr.send(data);
   };
 

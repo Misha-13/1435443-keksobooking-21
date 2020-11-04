@@ -11,7 +11,7 @@
   const pinsList = document.querySelector(`.map__pins`);
   const fragment = document.createDocumentFragment();
 
-  const fillPins = function (pin) {
+  const fillPins = (pin) => {
     const pinElement = pinTemplate.cloneNode(true);
     const img = pinElement.querySelector(`img`);
     const pinX = pin.location.x - X_SHIFT;
@@ -22,7 +22,7 @@
     return pinElement;
   };
 
-  const removeExistPin = function () {
+  const removeExistPin = () => {
     const mapAreaElement = mapArea.querySelector(`.map__card`);
     if (mapAreaElement) {
       const activatedPin = mapArea.querySelector(`.map__pin--active`);
@@ -31,22 +31,22 @@
     }
   };
 
-  const onInfoPinKeydown = function (evt) {
-    window.utility.isEscapeEvent(evt, function () {
+  const onInfoPinKeydown = (evt) => {
+    window.utility.isEscapeEvent(evt, () => {
       removeExistPin();
       document.removeEventListener(`keydown`, onInfoPinKeydown);
     });
   };
 
-  const setExitButtonEvent = function () {
+  const setExitButtonEvent = () => {
     const mapAreaElement = mapArea.querySelector(`.map__card`);
     const closePopupButton = mapAreaElement.querySelector(`.popup__close`);
-    closePopupButton.addEventListener(`click`, function () {
+    closePopupButton.addEventListener(`click`, () => {
       removeExistPin();
     });
   };
 
-  const showPinsCard = function (pin) {
+  const showPinsCard = (pin) => {
     removeExistPin();
     cardFragment.appendChild(window.card.fillCards(pin));
     mapArea.insertBefore(cardFragment, insertTargetElement);
@@ -54,13 +54,13 @@
     document.addEventListener(`keydown`, onInfoPinKeydown);
   };
 
-  const renderPinCard = function (pinsArray) {
+  const renderPinCard = (pinsArray) => {
     const mapPinsList = mapArea.querySelectorAll(`.map__pin`);
     let exceptionCounter = 0;
     for (let i = 0; i < mapPinsList.length; i++) {
       if (!mapPinsList[i].classList.contains(EXCEPTION)) {
         const currentPin = pinsArray[i - exceptionCounter];
-        mapPinsList[i].addEventListener(`click`, function () {
+        mapPinsList[i].addEventListener(`click`, () => {
           showPinsCard(currentPin);
           mapPinsList[i].classList.add(`map__pin--active`);
         });
@@ -70,7 +70,7 @@
     }
   };
 
-  const removePins = function () {
+  const removePins = () => {
     const mapPinsList = mapArea.querySelectorAll(`.map__pin`);
     for (let i = mapPinsList.length - 1; i > 0; i--) {
       if (!mapPinsList[i].classList.contains(EXCEPTION)) {
@@ -79,7 +79,7 @@
     }
   };
 
-  const returnPins = function (arr) {
+  const returnPins = (arr) => {
     mapArea.classList.remove(`map--faded`);
     for (let i = 0; i < arr.length; i++) {
       fragment.appendChild(fillPins(arr[i]));
@@ -88,7 +88,7 @@
     renderPinCard(arr);
   };
 
-  const renderPins = function () {
+  const renderPins = () => {
     window.load.getData(returnPins, window.error.showError);
   };
 
