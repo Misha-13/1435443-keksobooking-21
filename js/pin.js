@@ -9,7 +9,7 @@
   const PIN_TOP_BOTTOM_CORRECT = 65;
   const mainPin = document.querySelector(`.map__pin--main`);
 
-  const checkXBound = function (x) {
+  const checkXBound = (x) => {
     const maxX = MAX_X - HALF_PIN_SIZE;
     const minX = MIN_X - HALF_PIN_SIZE;
     if (x > maxX) {
@@ -21,7 +21,7 @@
     return x;
   };
 
-  const checkYBound = function (y) {
+  const checkYBound = (y) => {
     const minY = MIN_Y - PIN_TOP_BOTTOM_CORRECT;
     if (y > MAX_Y) {
       return MAX_Y;
@@ -32,15 +32,15 @@
     return y;
   };
 
-  const movePin = function () {
-    mainPin.addEventListener(`mousedown`, function (evt) {
+  const movePin = () => {
+    mainPin.addEventListener(`mousedown`, (evt) => {
       evt.preventDefault();
       let startCords = {
         x: evt.clientX,
         y: evt.clientY
       };
 
-      const onMouseMove = function (moveEvt) {
+      const onMouseMove = (moveEvt) => {
         moveEvt.preventDefault();
         const shift = {
           x: startCords.x - moveEvt.clientX,
@@ -60,7 +60,7 @@
         window.page.getAddress(mainPin.offsetLeft, mainPin.offsetTop);
       };
 
-      const onMouseUp = function (upEvt) {
+      const onMouseUp = (upEvt) => {
         upEvt.preventDefault();
         document.removeEventListener(`mousemove`, onMouseMove);
         document.removeEventListener(`mouseup`, onMouseUp);

@@ -17,6 +17,7 @@
   const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVEABLE_PIN_TALE_SIZE;
   const capacitySelector = form.querySelector(`#capacity`);
   const roomsSelector = form.querySelector(`#room_number`);
+  const filter = document.querySelector(`.map__filters`);
   const TypeMinCostMatch = {
     PALACE: 10000,
     FLAT: 1000,
@@ -24,90 +25,92 @@
     BUNGALOW: 0
   };
 
-  const getDisabledAddress = function () {
+  const getDisabledAddress = () => {
     addressInput.value = Math.round(disabledPinCordX) + `, ` + Math.round(disabledPinCordY);
   };
 
-  const switchDisabledValue = function (currentCollection) {
+  const switchDisabledValue = (currentCollection) => {
     for (let i = 0; i < currentCollection.length; i++) {
       currentCollection[i].toggleAttribute(`disabled`);
     }
   };
 
-  const getAddress = function (x, y) {
+  const getAddress = (x, y) => {
     const totalX = x + HALF_DISABLED_PIN_SIZE;
     const totalY = y + moveablePinShiftY;
     addressInput.value = Math.round(totalX) + `, ` + Math.round(totalY);
   };
 
-  const activateElements = function () {
-    getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
+  const activateElements = () => {
     switchDisabledValue(formFieldsets);
   };
 
-  const onRealtySelectorCheck = function () {
+  const onRealtySelectorCheck = () => {
     price.setAttribute(`min`, TypeMinCostMatch[realtyType.value.toUpperCase()]);
     price.setAttribute(`placeholder`, TypeMinCostMatch[realtyType.value.toUpperCase()]);
   };
 
-  const setTimeEvent = function () {
-    timein.addEventListener(`input`, function () {
+  const setTimeEvent = () => {
+    timein.addEventListener(`input`, () => {
       timeout.value = timein.value;
     });
-    timeout.addEventListener(`input`, function () {
+    timeout.addEventListener(`input`, () => {
       timein.value = timeout.value;
     });
   };
 
-  const onFormAfterReset = function () {
+  const onFormAfterReset = () => {
     onRealtySelectorCheck();
-    getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
+    mainPin.style.left = X_DISABLED_PIN_POSITION + `px`;
+    mainPin.style.top = Y_DISABLED_PIN_POSITION + `px`;
+    form.classList.add(`ad-form--disabled`);
+    document.querySelector(`.map`).classList.add(`map--faded`);
+    window.map.removeExistPin();
+    window.map.removePins();
+    filter.reset();
+    blockPage();
   };
 
-  const setValidation = function () {
+  const setValidation = () => {
     realtyType.addEventListener(`input`, onRealtySelectorCheck);
     setTimeEvent();
-    form.addEventListener(`reset`, function () {
-      setTimeout(onFormAfterReset, 100);
-    });
   };
 
-  const activateForm = function () {
+  const activateForm = () => {
     form.classList.remove(`ad-form--disabled`);
     activateElements();
     window.map.renderPins();
     setValidation();
   };
 
-  const onPinKeydown = function (evt) {
+  const onPinKeydown = (evt) => {
     window.utility.isEnterEvent(evt, activateForm);
   };
 
-  const onPinMousedown = function (evt) {
+  const onPinMousedown = (evt) => {
     window.utility.isMainMouseEvent(evt, activateForm);
   };
 
-  const onPageActivate = function () {
+  const activatePage = () => {
     mainPin.addEventListener(`mousedown`, onPinMousedown);
     mainPin.addEventListener(`keydown`, onPinKeydown);
   };
 
-  const onActivatedEventsRemove = function (evt) {
+  const onActivatedEventsRemove = () => {
     mainPin.removeEventListener(`mousedown`, onPinMousedown);
     mainPin.removeEventListener(`keydown`, onPinKeydown);
     mainPin.removeEventListener(`mousedown`, onPinSecondMousedown);
-    window.pin.movePin(evt);
   };
 
-  const onPinSecondKeydown = function (evt) {
+  const onPinSecondKeydown = (evt) => {
     window.utility.isEnterEvent(evt, onActivatedEventsRemove);
   };
 
-  const onPinSecondMousedown = function (evt) {
+  const onPinSecondMousedown = (evt) => {
     window.utility.isMainMouseEvent(evt, onActivatedEventsRemove);
   };
 
-  const onSelectorsCheck = function () {
+  const onSelectorsCheck = () => {
     const roomNum = +roomsSelector.value;
     const guestNum = +capacitySelector.value;
     const isValidChoice = roomNum === 100 ? (guestNum === 0) : (roomNum > guestNum && guestNum !== 0 || roomNum === guestNum);
@@ -121,17 +124,24 @@
 
   roomsSelector.addEventListener(`input`, onSelectorsCheck);
 
-  form.addEventListener(`submit`, function (evt) {
+  form.addEventListener(`submit`, (evt) => {
     onSelectorsCheck();
-    if (!capacitySelector.reportValidity()) {
-      evt.preventDefault();
+    if (capacitySelector.reportValidity()) {
+      window.upload.uploadData(new FormData(form), () => {
+        form.reset();
+      });
     }
+    evt.preventDefault();
   });
 
-  const blockPage = function () {
+  form.addEventListener(`reset`, () => {
+    setTimeout(onFormAfterReset, 100);
+  });
+
+  const blockPage = () => {
     getDisabledAddress();
     switchDisabledValue(formFieldsets);
-    onPageActivate();
+    activatePage();
     mainPin.addEventListener(`mousedown`, onPinSecondMousedown);
     mainPin.addEventListener(`keydown`, onPinSecondKeydown);
     onRealtySelectorCheck();
