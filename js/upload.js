@@ -2,6 +2,7 @@
 
 (function () {
   const main = document.querySelector(`main`);
+  const {method, url} = window.utility.ServerRequest.POST;
 
   const showUploadInfo = (windowId) => {
     const msgTemplate = document.querySelector(`#` + windowId).content.querySelector(`.` + windowId);
@@ -45,7 +46,7 @@
     xhr.addEventListener(`error`, () => {
       showUploadInfo(`error`);
     });
-    xhr.open(window.utility.SERVER_REQUEST.post.method, window.utility.SERVER_REQUEST.post.url);
+    xhr.open(method, url);
     xhr.send(data);
   };
 

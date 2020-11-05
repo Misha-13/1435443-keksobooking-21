@@ -2,12 +2,12 @@
 
 (function () {
   const MAIN_MOUSE_BUTTON_CODE = 0;
-  const SERVER_REQUEST = {
-    get: {
+  const ServerRequest = {
+    GET: {
       method: `GET`,
       url: `https://21.javascript.pages.academy/keksobooking/data`
     },
-    post: {
+    POST: {
       method: `POST`,
       url: `https://21.javascript.pages.academy/keksobooking`
     }
@@ -45,6 +45,6 @@
     isEscapeEvent,
     isMainMouseEvent,
     StatusCode,
-    SERVER_REQUEST
+    ServerRequest
   };
 })();

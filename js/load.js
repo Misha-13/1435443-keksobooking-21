@@ -1,6 +1,9 @@
 'use strict';
 
 (function () {
+  const {OK, BAD_REQUEST, NOT_FOUND} = window.utility.StatusCode;
+  const {method, url} = window.utility.ServerRequest.GET;
+
   const getData = (onSuccess, onError) => {
     const xhr = new XMLHttpRequest();
 
@@ -8,13 +11,13 @@
     xhr.addEventListener(`load`, () => {
       let error;
       switch (xhr.status) {
-        case window.utility.StatusCode.OK:
+        case OK:
           onSuccess(xhr.response);
           break;
-        case window.utility.StatusCode.BAD_REQUEST:
+        case BAD_REQUEST:
           error = `Неверный запрос`;
           break;
-        case window.utility.StatusCode.NOT_FOUND:
+        case NOT_FOUND:
           error = `Ничего не найдено`;
           break;
         default:
@@ -34,7 +37,7 @@
     });
 
     xhr.timeout = 10000;
-    xhr.open(window.utility.SERVER_REQUEST.get.method, window.utility.SERVER_REQUEST.get.url);
+    xhr.open(method, url);
     xhr.send();
   };
 
