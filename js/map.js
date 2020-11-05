@@ -4,12 +4,15 @@
   const X_SHIFT = 25;
   const Y_SHIFT = 70;
   const EXCEPTION = `map__pin--main`;
+  const MAX_PINS = 5;
+  const FILTER_SELECTOR_PREFIX = `housing-`;
   const cardFragment = document.createDocumentFragment();
   const mapArea = document.querySelector(`.map`);
   const insertTargetElement = mapArea.querySelector(`.map__filters-container`);
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
   const pinsList = document.querySelector(`.map__pins`);
   const fragment = document.createDocumentFragment();
+  let serverData = [];
 
   const fillPins = (pin) => {
     const pinElement = pinTemplate.cloneNode(true);
@@ -79,22 +82,43 @@
     }
   };
 
-  const returnPins = (arr) => {
-    mapArea.classList.remove(`map--faded`);
-    for (let i = 0; i < arr.length; i++) {
-      fragment.appendChild(fillPins(arr[i]));
+  const renderPins = (data) => {
+    const takeLenght = data.length > MAX_PINS ? MAX_PINS : data.length;
+    for (let i = 0; i < takeLenght; i++) {
+      fragment.appendChild(fillPins(data[i]));
     }
     pinsList.appendChild(fragment);
-    renderPinCard(arr);
+    renderPinCard(data);
   };
 
-  const renderPins = () => {
-    window.load.getData(returnPins, window.error.showError);
+  const saveServerData = (data) => {
+    mapArea.classList.remove(`map--faded`);
+    serverData = data;
+    renderPins(data);
+  };
+
+  const uploadPins = () => {
+    window.load.getData(saveServerData, window.error.showError);
+  };
+
+  const applyFilter = (filterSelectId = `type`, filterSelect = `any`) => {
+    removePins();
+    filterSelectId = filterSelectId.replace(FILTER_SELECTOR_PREFIX, ``);
+    const sameHouseType = serverData.filter((pin) => {
+      return pin.offer[filterSelectId] === filterSelect;
+    });
+    const filteredPins = sameHouseType.concat(serverData);
+    const totalPins = filteredPins.filter((pin, index) => {
+      return filteredPins.indexOf(pin) === index;
+    });
+    renderPins(totalPins);
   };
 
   window.map = {
     renderPins,
     removeExistPin,
-    removePins
+    removePins,
+    uploadPins,
+    applyFilter
   };
 })();

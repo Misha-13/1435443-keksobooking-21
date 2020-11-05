@@ -25,6 +25,11 @@
     BUNGALOW: 0
   };
 
+  filter.addEventListener(`change`, (evt) => {
+    window.map.removeExistPin();
+    window.map.applyFilter(evt.target.id, evt.target.value);
+  });
+
   const getDisabledAddress = () => {
     addressInput.value = Math.round(disabledPinCordX) + `, ` + Math.round(disabledPinCordY);
   };
@@ -79,7 +84,7 @@
   const activateForm = () => {
     form.classList.remove(`ad-form--disabled`);
     activateElements();
-    window.map.renderPins();
+    window.map.uploadPins();
     setValidation();
   };
 
