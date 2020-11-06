@@ -107,11 +107,7 @@
     const sameHouseType = serverData.filter((pin) => {
       return pin.offer[filterSelectId] === filterSelect;
     });
-    const filteredPins = sameHouseType.concat(serverData);
-    const totalPins = filteredPins.filter((pin, index) => {
-      return filteredPins.indexOf(pin) === index;
-    });
-    renderPins(totalPins);
+    renderPins(sameHouseType);
   };
 
   window.map = {
