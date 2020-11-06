@@ -84,7 +84,7 @@
     form.classList.remove(`ad-form--disabled`);
     activateElements();
     window.load.getData(window.map.saveServerData, window.error.showError);
-    window.map.uploadPins();
+    /* window.map.uploadPins(); */
     setValidation();
   };
 
