@@ -5,7 +5,6 @@
   const Y_SHIFT = 70;
   const EXCEPTION = `map__pin--main`;
   const MAX_PINS = 5;
-  const FILTER_SELECTOR_PREFIX = `housing-`;
   const cardFragment = document.createDocumentFragment();
   const mapArea = document.querySelector(`.map`);
   const insertTargetElement = mapArea.querySelector(`.map__filters-container`);
@@ -97,15 +96,10 @@
     renderPins(data);
   };
 
-  const uploadPins = () => {
-    window.load.getData(saveServerData, window.error.showError);
-  };
-
-  const applyFilter = (filterSelectId = `type`, filterSelect = `any`) => {
+  const applyFilter = (filterSelect = `any`) => {
     removePins();
-    filterSelectId = filterSelectId.replace(FILTER_SELECTOR_PREFIX, ``);
     const sameHouseType = serverData.filter((pin) => {
-      return pin.offer[filterSelectId] === filterSelect;
+      return pin.offer.type === filterSelect;
     });
     renderPins(sameHouseType);
   };
@@ -114,7 +108,7 @@
     renderPins,
     removeExistPin,
     removePins,
-    uploadPins,
+    saveServerData,
     applyFilter
   };
 })();

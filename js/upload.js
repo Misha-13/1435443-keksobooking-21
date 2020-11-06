@@ -16,10 +16,10 @@
 
     const onMsgKeyDown = (evt) => {
       window.utility.isEscapeEvent(evt, onMsgWindowRemove);
-      document.removeEventListener(`keydown`, onMsgKeyDown);
+      window.removeEventListener(`keydown`, onMsgKeyDown);
     };
 
-    document.addEventListener(`keydown`, onMsgKeyDown);
+    window.addEventListener(`keydown`, onMsgKeyDown);
 
     if (windowId === `error`) {
       const errorButton = msgWindow.querySelector(`.error__button`);
