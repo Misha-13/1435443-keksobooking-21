@@ -65,6 +65,7 @@
   };
 
   const onFormAfterReset = () => {
+    mainPin.focus();
     mainPin.style.left = X_DISABLED_PIN_POSITION + `px`;
     mainPin.style.top = Y_DISABLED_PIN_POSITION + `px`;
     form.classList.add(`ad-form--disabled`);
@@ -73,6 +74,7 @@
     window.map.removePins();
     filter.reset();
     blockPage();
+    mainPin.blur();
   };
 
   const setValidation = () => {

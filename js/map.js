@@ -96,12 +96,71 @@
     renderPins(data);
   };
 
-  const applyFilter = (filterSelect = `any`) => {
+  /* const applyFilter = (filterSelect = `any`) => {
+    const filterFields = {
+      type: pin.offer.type
+    };
+    const selectors = mapArea.querySelectorAll(`.map__filter`);
+    for (let i = 0; i < selectors.length; i++) {
+      alert(selectors[i].value);
+    }
     removePins();
     let sameHouseType = serverData;
     if (filterSelect !== `any`) {
       sameHouseType = sameHouseType.filter((pin) => {
         return pin.offer.type === filterSelect;
+      });
+    }
+    renderPins(sameHouseType);
+  }; */
+
+  const applyFilter = (filterSelect = `any`) => {
+    /* const filterFields = [`type`, `price`, `rooms`, `guests`]; */
+    const PriceValue = {
+      LOW: `low`,
+      MIDDLE: `middle`,
+      HIGH: `high`,
+    };
+    const selectors = mapArea.querySelectorAll(`.map__filter`);
+    let sameHouseType = serverData;
+    removePins();
+    for (let i = 0; i < selectors.length; i++) {
+      /* alert(selectors[i].value); */
+      if (i === 0) {
+        if (selectors[i].value !== `any`) {
+          sameHouseType = sameHouseType.filter((pin) => {
+            return pin.offer.type === selectors[i].value;
+          });
+        }
+      } else if (i === 1) {
+        if (selectors[i].value !== `any`) {
+          sameHouseType = sameHouseType.filter((pin) => {
+            if (selectors[i].value === PriceValue.LOW) {
+              return pin.offer.price < 10000;
+            } else if (selectors[i].value === PriceValue.HIGH) {
+              return pin.offer.price > 50000;
+            }
+            return pin.offer.price >= 10000 && pin.offer.price <= 50000;
+          });
+        }
+      } else if (i === 2) {
+        if (selectors[i].value !== `any`) {
+          sameHouseType = sameHouseType.filter((pin) => {
+            return pin.offer.rooms === parseInt(selectors[i].value, 10);
+          });
+        }
+      } else if (i === 3) {
+        if (selectors[i].value !== `any`) {
+          sameHouseType = sameHouseType.filter((pin) => {
+            return pin.offer.guests === parseInt(selectors[i].value, 10);
+          });
+        }
+      }
+    }
+    const checks = mapArea.querySelectorAll(`.map__checkbox:checked`);
+    for (let i = 0; i < checks.length; i++) {
+      sameHouseType = sameHouseType.filter((pin) => {
+        return pin.offer.features.includes(checks[i].value);
       });
     }
     renderPins(sameHouseType);
