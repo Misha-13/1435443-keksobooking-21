@@ -98,9 +98,12 @@
 
   const applyFilter = (filterSelect = `any`) => {
     removePins();
-    const sameHouseType = serverData.filter((pin) => {
-      return pin.offer.type === filterSelect;
-    });
+    let sameHouseType = serverData;
+    if (filterSelect !== `any`) {
+      sameHouseType = sameHouseType.filter((pin) => {
+        return pin.offer.type === filterSelect;
+      });
+    }
     renderPins(sameHouseType);
   };
 
