@@ -4,12 +4,14 @@
   const X_SHIFT = 25;
   const Y_SHIFT = 70;
   const EXCEPTION = `map__pin--main`;
+  const MAX_PINS = 5;
   const cardFragment = document.createDocumentFragment();
   const mapArea = document.querySelector(`.map`);
   const insertTargetElement = mapArea.querySelector(`.map__filters-container`);
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
   const pinsList = document.querySelector(`.map__pins`);
   const fragment = document.createDocumentFragment();
+  let serverData = [];
 
   const fillPins = (pin) => {
     const pinElement = pinTemplate.cloneNode(true);
@@ -79,22 +81,37 @@
     }
   };
 
-  const returnPins = (arr) => {
-    mapArea.classList.remove(`map--faded`);
-    for (let i = 0; i < arr.length; i++) {
-      fragment.appendChild(fillPins(arr[i]));
+  const renderPins = (data) => {
+    const takeLenght = data.length > MAX_PINS ? MAX_PINS : data.length;
+    for (let i = 0; i < takeLenght; i++) {
+      fragment.appendChild(fillPins(data[i]));
     }
     pinsList.appendChild(fragment);
-    renderPinCard(arr);
+    renderPinCard(data);
   };
 
-  const renderPins = () => {
-    window.load.getData(returnPins, window.error.showError);
+  const saveServerData = (data) => {
+    mapArea.classList.remove(`map--faded`);
+    serverData = data;
+    renderPins(data);
+  };
+
+  const applyFilter = (filterSelect = `any`) => {
+    removePins();
+    let sameHouseType = serverData;
+    if (filterSelect !== `any`) {
+      sameHouseType = sameHouseType.filter((pin) => {
+        return pin.offer.type === filterSelect;
+      });
+    }
+    renderPins(sameHouseType);
   };
 
   window.map = {
     renderPins,
     removeExistPin,
-    removePins
+    removePins,
+    saveServerData,
+    applyFilter
   };
 })();

@@ -25,6 +25,11 @@
     BUNGALOW: 0
   };
 
+  filter.addEventListener(`change`, (evt) => {
+    window.map.removeExistPin();
+    window.map.applyFilter(evt.target.value);
+  });
+
   const getDisabledAddress = () => {
     addressInput.value = Math.round(disabledPinCordX) + `, ` + Math.round(disabledPinCordY);
   };
@@ -60,7 +65,6 @@
   };
 
   const onFormAfterReset = () => {
-    onRealtySelectorCheck();
     mainPin.style.left = X_DISABLED_PIN_POSITION + `px`;
     mainPin.style.top = Y_DISABLED_PIN_POSITION + `px`;
     form.classList.add(`ad-form--disabled`);
@@ -79,7 +83,7 @@
   const activateForm = () => {
     form.classList.remove(`ad-form--disabled`);
     activateElements();
-    window.map.renderPins();
+    window.load.getData(window.map.saveServerData, window.error.showError);
     setValidation();
   };
 
