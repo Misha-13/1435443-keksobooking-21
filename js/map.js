@@ -11,7 +11,20 @@
   const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
   const pinsList = document.querySelector(`.map__pins`);
   const fragment = document.createDocumentFragment();
+  const selectors = mapArea.querySelectorAll(`.map__filter`);
   let serverData = [];
+  let filteredData;
+  const FilterSelectorsName = {
+    TYPE: `housing-type`,
+    PRICE: `housing-price`,
+    ROOMS: `housing-rooms`,
+    GUESTS: `housing-guests`
+  };
+  const PriceValue = {
+    LOW: `low`,
+    MIDDLE: `middle`,
+    HIGH: `high`,
+  };
 
   const fillPins = (pin) => {
     const pinElement = pinTemplate.cloneNode(true);
@@ -96,74 +109,74 @@
     renderPins(data);
   };
 
-  /* const applyFilter = (filterSelect = `any`) => {
-    const filterFields = {
-      type: pin.offer.type
-    };
-    const selectors = mapArea.querySelectorAll(`.map__filter`);
-    for (let i = 0; i < selectors.length; i++) {
-      alert(selectors[i].value);
-    }
-    removePins();
-    let sameHouseType = serverData;
-    if (filterSelect !== `any`) {
-      sameHouseType = sameHouseType.filter((pin) => {
-        return pin.offer.type === filterSelect;
+  const typeFilter = (value) => {
+    if (value !== `any`) {
+      filteredData = filteredData.filter((pin) => {
+        return pin.offer.type === value;
       });
     }
-    renderPins(sameHouseType);
-  }; */
+  };
 
-  const applyFilter = (filterSelect = `any`) => {
-    /* const filterFields = [`type`, `price`, `rooms`, `guests`]; */
-    const PriceValue = {
-      LOW: `low`,
-      MIDDLE: `middle`,
-      HIGH: `high`,
-    };
-    const selectors = mapArea.querySelectorAll(`.map__filter`);
-    let sameHouseType = serverData;
-    removePins();
-    for (let i = 0; i < selectors.length; i++) {
-      /* alert(selectors[i].value); */
-      if (i === 0) {
-        if (selectors[i].value !== `any`) {
-          sameHouseType = sameHouseType.filter((pin) => {
-            return pin.offer.type === selectors[i].value;
-          });
+  const priceFilter = (value) => {
+    if (value !== `any`) {
+      filteredData = filteredData.filter((pin) => {
+        if (value === PriceValue.LOW) {
+          return pin.offer.price < 10000;
+        } else if (value === PriceValue.HIGH) {
+          return pin.offer.price > 50000;
         }
-      } else if (i === 1) {
-        if (selectors[i].value !== `any`) {
-          sameHouseType = sameHouseType.filter((pin) => {
-            if (selectors[i].value === PriceValue.LOW) {
-              return pin.offer.price < 10000;
-            } else if (selectors[i].value === PriceValue.HIGH) {
-              return pin.offer.price > 50000;
-            }
-            return pin.offer.price >= 10000 && pin.offer.price <= 50000;
-          });
-        }
-      } else if (i === 2) {
-        if (selectors[i].value !== `any`) {
-          sameHouseType = sameHouseType.filter((pin) => {
-            return pin.offer.rooms === parseInt(selectors[i].value, 10);
-          });
-        }
-      } else if (i === 3) {
-        if (selectors[i].value !== `any`) {
-          sameHouseType = sameHouseType.filter((pin) => {
-            return pin.offer.guests === parseInt(selectors[i].value, 10);
-          });
-        }
-      }
+        return pin.offer.price >= 10000 && pin.offer.price <= 50000;
+      });
     }
+  };
+
+  const roomsFilter = (value) => {
+    if (value !== `any`) {
+      filteredData = filteredData.filter((pin) => {
+        return pin.offer.rooms === parseInt(value, 10);
+      });
+    }
+  };
+
+  const guestsFilter = (value) => {
+    if (value !== `any`) {
+      filteredData = filteredData.filter((pin) => {
+        return pin.offer.guests === parseInt(value, 10);
+      });
+    }
+  };
+
+  const featuresFilter = () => {
     const checks = mapArea.querySelectorAll(`.map__checkbox:checked`);
     for (let i = 0; i < checks.length; i++) {
-      sameHouseType = sameHouseType.filter((pin) => {
+      filteredData = filteredData.filter((pin) => {
         return pin.offer.features.includes(checks[i].value);
       });
     }
-    renderPins(sameHouseType);
+  };
+
+  const applyFilter = () => {
+    filteredData = serverData;
+    removeExistPin();
+    removePins();
+    for (let i = 0; i < selectors.length; i++) {
+      switch (selectors[i].name) {
+        case FilterSelectorsName.TYPE:
+          typeFilter(selectors[i].value);
+          break;
+        case FilterSelectorsName.PRICE:
+          priceFilter(selectors[i].value);
+          break;
+        case FilterSelectorsName.ROOMS:
+          roomsFilter(selectors[i].value);
+          break;
+        case FilterSelectorsName.GUESTS:
+          guestsFilter(selectors[i].value);
+          break;
+      }
+    }
+    featuresFilter();
+    renderPins(filteredData);
   };
 
   window.map = {

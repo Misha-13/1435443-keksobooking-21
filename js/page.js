@@ -12,6 +12,7 @@
   const price = form.querySelector(`#price`);
   const timein = form.querySelector(`#timein`);
   const timeout = form.querySelector(`#timeout`);
+  const submitButton = form.querySelector(`.ad-form__submit`);
   const disabledPinCordX = X_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
   const disabledPinCordY = Y_DISABLED_PIN_POSITION + HALF_DISABLED_PIN_SIZE;
   const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVEABLE_PIN_TALE_SIZE;
@@ -25,10 +26,11 @@
     BUNGALOW: 0
   };
 
-  filter.addEventListener(`change`, (evt) => {
-    window.map.removeExistPin();
-    window.map.applyFilter(evt.target.value);
-  });
+  const onSelectorsChanged = () => {
+    window.debounce.setDebounce(window.map.applyFilter);
+  };
+
+  filter.addEventListener(`change`, onSelectorsChanged);
 
   const getDisabledAddress = () => {
     addressInput.value = Math.round(disabledPinCordX) + `, ` + Math.round(disabledPinCordY);
@@ -65,7 +67,6 @@
   };
 
   const onFormAfterReset = () => {
-    mainPin.focus();
     mainPin.style.left = X_DISABLED_PIN_POSITION + `px`;
     mainPin.style.top = Y_DISABLED_PIN_POSITION + `px`;
     form.classList.add(`ad-form--disabled`);
@@ -74,7 +75,6 @@
     window.map.removePins();
     filter.reset();
     blockPage();
-    mainPin.blur();
   };
 
   const setValidation = () => {
@@ -134,7 +134,9 @@
     onSelectorsCheck();
     if (capacitySelector.reportValidity()) {
       window.upload.uploadData(new FormData(form), () => {
+        submitButton.focus();
         form.reset();
+        submitButton.blur();
       });
     }
     evt.preventDefault();
