@@ -25,6 +25,10 @@
     MIDDLE: `middle`,
     HIGH: `high`,
   };
+  const PriceBound = {
+    LOW: 10000,
+    HIGH: 50000
+  };
 
   const fillPins = (pin) => {
     const pinElement = pinTemplate.cloneNode(true);
@@ -121,11 +125,11 @@
     if (value !== `any`) {
       filteredData = filteredData.filter((pin) => {
         if (value === PriceValue.LOW) {
-          return pin.offer.price < 10000;
+          return pin.offer.price < PriceBound.LOW;
         } else if (value === PriceValue.HIGH) {
-          return pin.offer.price > 50000;
+          return pin.offer.price > PriceBound.HIGH;
         }
-        return pin.offer.price >= 10000 && pin.offer.price <= 50000;
+        return pin.offer.price >= PriceBound.LOW && pin.offer.price <= PriceBound.HIGH;
       });
     }
   };
@@ -133,7 +137,7 @@
   const roomsFilter = (value) => {
     if (value !== `any`) {
       filteredData = filteredData.filter((pin) => {
-        return pin.offer.rooms === parseInt(value, 10);
+        return pin.offer.rooms === +value;
       });
     }
   };
@@ -141,7 +145,7 @@
   const guestsFilter = (value) => {
     if (value !== `any`) {
       filteredData = filteredData.filter((pin) => {
-        return pin.offer.guests === parseInt(value, 10);
+        return pin.offer.guests === +value;
       });
     }
   };
@@ -160,18 +164,19 @@
     removeExistPin();
     removePins();
     for (let i = 0; i < selectors.length; i++) {
-      switch (selectors[i].name) {
+      const {name, value} = selectors[i];
+      switch (name) {
         case FilterSelectorsName.TYPE:
-          typeFilter(selectors[i].value);
+          typeFilter(value);
           break;
         case FilterSelectorsName.PRICE:
-          priceFilter(selectors[i].value);
+          priceFilter(value);
           break;
         case FilterSelectorsName.ROOMS:
-          roomsFilter(selectors[i].value);
+          roomsFilter(value);
           break;
         case FilterSelectorsName.GUESTS:
-          guestsFilter(selectors[i].value);
+          guestsFilter(value);
           break;
       }
     }
