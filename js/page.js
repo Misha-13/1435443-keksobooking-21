@@ -19,12 +19,19 @@ const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVE
 const capacitySelector = form.querySelector(`#capacity`);
 const roomsSelector = form.querySelector(`#room_number`);
 const filter = document.querySelector(`.map__filters`);
+const realtyChooser = document.querySelector(`.ad-form__input`);
+const realtyPreview = document.querySelector(`.ad-form__photo`);
+const avatarChooser = document.querySelector(`.ad-form-header__input`);
+const avatarPreview = document.querySelector(`.ad-form-header__preview`);
 const TypeMinCostMatch = {
   PALACE: 10000,
   FLAT: 1000,
   HOUSE: 5000,
   BUNGALOW: 0
 };
+
+window.preview.showPreview(avatarChooser, avatarPreview);
+window.preview.showPreview(realtyChooser, realtyPreview);
 
 const onSelectorsChanged = () => {
   window.debounce.setDebounce(window.map.applyFilter);
@@ -73,6 +80,8 @@ const onFormAfterReset = () => {
   document.querySelector(`.map`).classList.add(`map--faded`);
   window.map.removeExistPin();
   window.map.removePins();
+  window.preview.removePreview(avatarPreview);
+  window.preview.removePreview(realtyPreview);
   filter.reset();
   blockPage();
 };

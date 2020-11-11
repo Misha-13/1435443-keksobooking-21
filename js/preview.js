@@ -1,13 +1,11 @@
 'use strict';
 
-const showPreview = () => {
-  const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
-  const fileChooser = document.querySelector(`.ad-form__input`);
-  const preview = document.querySelector(`.ad-form__photo`).querySelector(`img`);
-  // const fileChooser = document.querySelector(`.ad-form-header__input`);
-  // const preview = document.querySelector(`.ad-form-header__preview`).querySelector(`img`);
-  fileChooser.addEventListener(`change`, () => {
-    const file = fileChooser.files[0];
+const AVATAR_SRC = `img/muffin-grey.svg`;
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
+
+const showPreview = (photoInput, photoOutput) => {
+  photoInput.addEventListener(`change`, () => {
+    const file = photoInput.files[0];
     const fileName = file.name.toLowerCase();
 
     const matches = FILE_TYPES.some((element) => {
@@ -16,9 +14,19 @@ const showPreview = () => {
 
     if (matches) {
       const reader = new FileReader();
+      let imgPreview = photoOutput.querySelector(`img`);
+
+      if (!imgPreview) {
+        const img = document.createElement(`img`);
+        img.setAttribute(`width`, `40`);
+        img.setAttribute(`height`, `44`);
+        img.setAttribute(`alt`, `Фотография жилья`);
+        photoOutput.prepend(img);
+        imgPreview = photoOutput.querySelector(`img`);
+      }
 
       reader.addEventListener(`load`, () => {
-        preview.src = reader.result;
+        imgPreview.src = reader.result;
       });
 
       reader.readAsDataURL(file);
@@ -26,7 +34,22 @@ const showPreview = () => {
   });
 };
 
+const removePreview = (photoOutput) => {
+  const avatarBlock = document.querySelector(`.ad-form-header__preview`);
+  let imgPreview = photoOutput.querySelector(`img`);
+
+  if (photoOutput === avatarBlock) {
+    imgPreview = avatarBlock.querySelector(`img`);
+    imgPreview.src = AVATAR_SRC;
+  } else {
+    if (imgPreview) {
+      imgPreview.remove();
+    }
+  }
+};
+
 window.preview = {
-  showPreview
+  showPreview,
+  removePreview
 };
 
