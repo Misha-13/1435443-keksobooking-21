@@ -21,6 +21,7 @@ const showPreview = (photoInput, photoOutput) => {
         img.setAttribute(`width`, `40`);
         img.setAttribute(`height`, `44`);
         img.setAttribute(`alt`, `Фотография жилья`);
+        photoOutput.setAttribute(`style`, `display:flex; align-items:center; justify-content:space-around;`);
         photoOutput.prepend(img);
         imgPreview = photoOutput.querySelector(`img`);
       }
@@ -43,6 +44,7 @@ const removePreview = (photoOutput) => {
     imgPreview.src = AVATAR_SRC;
   } else {
     if (imgPreview) {
+      photoOutput.removeAttribute(`style`);
       imgPreview.remove();
     }
   }

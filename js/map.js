@@ -100,7 +100,9 @@ const removePins = () => {
 const renderPins = (data) => {
   const takeLenght = data.length > MAX_PINS ? MAX_PINS : data.length;
   for (let i = 0; i < takeLenght; i++) {
-    fragment.appendChild(fillPins(data[i]));
+    if (data[i].offer) {
+      fragment.appendChild(fillPins(data[i]));
+    }
   }
   pinsList.appendChild(fragment);
   renderPinCard(data);

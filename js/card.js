@@ -19,7 +19,7 @@ const fillPhotosBlock = (imgArray) => {
     }
     imgList.appendChild(imgFragment);
   } else {
-    document.cardElement.querySelector(`.popup__photos`).querySelector(`img`).remove();
+    document.cardElement.querySelector(`.popup__photos`).remove();
   }
 };
 
@@ -41,18 +41,23 @@ const fillTextBlock = (currentObject) => {
 };
 
 const delNotUseFeatures = (currentArray) => {
+  const featuresBlock = document.cardElement.querySelector(`.popup__features`);
   const childrenElements = document.cardElement.querySelector(`.popup__features`).children;
-  for (let i = childrenElements.length - 1; i >= 0; i--) {
-    const childElement = childrenElements[i];
-    let existFlag = false;
-    for (let j = 0; j < currentArray.length; j++) {
-      if (childElement.classList.contains(`popup__feature--` + currentArray[j])) {
-        existFlag = true;
+  if (currentArray.length > 0) {
+    for (let i = childrenElements.length - 1; i >= 0; i--) {
+      const childElement = childrenElements[i];
+      let existFlag = false;
+      for (let j = 0; j < currentArray.length; j++) {
+        if (childElement.classList.contains(`popup__feature--` + currentArray[j])) {
+          existFlag = true;
+        }
+      }
+      if (existFlag === false) {
+        childElement.remove();
       }
     }
-    if (existFlag === false) {
-      childElement.remove();
-    }
+  } else {
+    featuresBlock.remove();
   }
 };
 

@@ -19,6 +19,7 @@ const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVE
 const capacitySelector = form.querySelector(`#capacity`);
 const roomsSelector = form.querySelector(`#room_number`);
 const filter = document.querySelector(`.map__filters`);
+const filterFields = filter.children;
 const realtyChooser = document.querySelector(`.ad-form__input`);
 const realtyPreview = document.querySelector(`.ad-form__photo`);
 const avatarChooser = document.querySelector(`.ad-form-header__input`);
@@ -57,6 +58,7 @@ const getAddress = (x, y) => {
 
 const activateElements = () => {
   switchDisabledValue(formFieldsets);
+  switchDisabledValue(filterFields);
 };
 
 const onRealtySelectorCheck = () => {
@@ -93,6 +95,7 @@ const setValidation = () => {
 
 const activateForm = () => {
   form.classList.remove(`ad-form--disabled`);
+  getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
   activateElements();
   window.load.getData(window.map.saveServerData, window.error.showError);
   setValidation();
@@ -158,6 +161,7 @@ form.addEventListener(`reset`, () => {
 const blockPage = () => {
   getDisabledAddress();
   switchDisabledValue(formFieldsets);
+  switchDisabledValue(filterFields);
   activatePage();
   mainPin.addEventListener(`mousedown`, onPinSecondMousedown);
   mainPin.addEventListener(`keydown`, onPinSecondKeydown);
