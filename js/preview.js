@@ -3,6 +3,14 @@
 const AVATAR_SRC = `img/muffin-grey.svg`;
 const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
 
+const createImg = () => {
+  const img = document.createElement(`img`);
+  img.setAttribute(`width`, `40`);
+  img.setAttribute(`height`, `44`);
+  img.setAttribute(`alt`, `Фотография жилья`);
+  return img;
+};
+
 const showPreview = (photoInput, photoOutput) => {
   photoInput.addEventListener(`change`, () => {
     const file = photoInput.files[0];
@@ -17,12 +25,9 @@ const showPreview = (photoInput, photoOutput) => {
       let imgPreview = photoOutput.querySelector(`img`);
 
       if (!imgPreview) {
-        const img = document.createElement(`img`);
-        img.setAttribute(`width`, `40`);
-        img.setAttribute(`height`, `44`);
-        img.setAttribute(`alt`, `Фотография жилья`);
+        const newImg = createImg();
         photoOutput.setAttribute(`style`, `display:flex; align-items:center; justify-content:space-around;`);
-        photoOutput.prepend(img);
+        photoOutput.prepend(newImg);
         imgPreview = photoOutput.querySelector(`img`);
       }
 

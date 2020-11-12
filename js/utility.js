@@ -21,28 +21,28 @@ const KeysList = {
   ENTER: `Enter`
 };
 
-const isEnterEvent = (evt, action) => {
+const setEnterEvent = (evt, action) => {
   if (evt.key === KeysList.ENTER) {
     action();
   }
 };
 
-const isEscapeEvent = (evt, action) => {
+const setEscapeEvent = (evt, action) => {
   if (evt.key === KeysList.ESCAPE) {
     action();
   }
 };
 
-const isMainMouseEvent = (evt, action) => {
+const setMainMouseEvent = (evt, action) => {
   if (evt.button === MAIN_MOUSE_BUTTON_CODE) {
     action();
   }
 };
 
 window.utility = {
-  isEnterEvent,
-  isEscapeEvent,
-  isMainMouseEvent,
+  setEnterEvent,
+  setEscapeEvent,
+  setMainMouseEvent,
   StatusCode,
   ServerRequest
 };

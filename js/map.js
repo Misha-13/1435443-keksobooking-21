@@ -10,7 +10,7 @@ const insertTargetElement = mapArea.querySelector(`.map__filters-container`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const pinsList = document.querySelector(`.map__pins`);
 const fragment = document.createDocumentFragment();
-const selectors = mapArea.querySelectorAll(`.map__filter`);
+const selectors = Array.from(mapArea.querySelectorAll(`.map__filter`));
 let serverData = [];
 let filteredData;
 const FilterSelectorsName = {
@@ -50,7 +50,7 @@ const removeExistPin = () => {
 };
 
 const onInfoPinKeydown = (evt) => {
-  window.utility.isEscapeEvent(evt, () => {
+  window.utility.setEscapeEvent(evt, () => {
     removeExistPin();
     document.removeEventListener(`keydown`, onInfoPinKeydown);
   });
@@ -73,28 +73,28 @@ const showPinsCard = (pin) => {
 };
 
 const renderPinCard = (pinsArray) => {
-  const mapPinsList = mapArea.querySelectorAll(`.map__pin`);
+  const mapPinsList = Array.from(mapArea.querySelectorAll(`.map__pin`));
   let exceptionCounter = 0;
-  for (let i = 0; i < mapPinsList.length; i++) {
-    if (!mapPinsList[i].classList.contains(EXCEPTION)) {
-      const currentPin = pinsArray[i - exceptionCounter];
-      mapPinsList[i].addEventListener(`click`, () => {
+  mapPinsList.forEach((element, index) => {
+    if (!element.classList.contains(EXCEPTION)) {
+      const currentPin = pinsArray[index - exceptionCounter];
+      element.addEventListener(`click`, () => {
         showPinsCard(currentPin);
-        mapPinsList[i].classList.add(`map__pin--active`);
+        element.classList.add(`map__pin--active`);
       });
     } else {
       exceptionCounter++;
     }
-  }
+  });
 };
 
 const removePins = () => {
-  const mapPinsList = mapArea.querySelectorAll(`.map__pin`);
-  for (let i = mapPinsList.length - 1; i > 0; i--) {
-    if (!mapPinsList[i].classList.contains(EXCEPTION)) {
-      mapPinsList[i].remove();
+  const mapPinsList = Array.from(mapArea.querySelectorAll(`.map__pin`));
+  mapPinsList.forEach((element) => {
+    if (!element.classList.contains(EXCEPTION)) {
+      element.remove();
     }
-  }
+  });
 };
 
 const renderPins = (data) => {
@@ -114,7 +114,7 @@ const saveServerData = (data) => {
   renderPins(data);
 };
 
-const typeFilter = (value) => {
+const setTypeFilter = (value) => {
   if (value !== `any`) {
     filteredData = filteredData.filter((pin) => {
       return pin.offer.type === value;
@@ -122,7 +122,7 @@ const typeFilter = (value) => {
   }
 };
 
-const priceFilter = (value) => {
+const setPriceFilter = (value) => {
   if (value !== `any`) {
     filteredData = filteredData.filter((pin) => {
       if (value === PriceValue.LOW) {
@@ -135,7 +135,7 @@ const priceFilter = (value) => {
   }
 };
 
-const roomsFilter = (value) => {
+const setRoomsFilter = (value) => {
   if (value !== `any`) {
     filteredData = filteredData.filter((pin) => {
       return pin.offer.rooms === +value;
@@ -143,7 +143,7 @@ const roomsFilter = (value) => {
   }
 };
 
-const guestsFilter = (value) => {
+const setGuestsFilter = (value) => {
   if (value !== `any`) {
     filteredData = filteredData.filter((pin) => {
       return pin.offer.guests === +value;
@@ -151,37 +151,37 @@ const guestsFilter = (value) => {
   }
 };
 
-const featuresFilter = () => {
-  const checks = mapArea.querySelectorAll(`.map__checkbox:checked`);
-  for (let i = 0; i < checks.length; i++) {
+const setFeaturesFilter = () => {
+  const checks = Array.from(mapArea.querySelectorAll(`.map__checkbox:checked`));
+  checks.forEach((element) => {
     filteredData = filteredData.filter((pin) => {
-      return pin.offer.features.includes(checks[i].value);
+      return pin.offer.features.includes(element.value);
     });
-  }
+  });
 };
 
 const applyFilter = () => {
   filteredData = serverData;
   removeExistPin();
   removePins();
-  for (let i = 0; i < selectors.length; i++) {
-    const {name, value} = selectors[i];
+  selectors.forEach((element) => {
+    const {name, value} = element;
     switch (name) {
       case FilterSelectorsName.TYPE:
-        typeFilter(value);
+        setTypeFilter(value);
         break;
       case FilterSelectorsName.PRICE:
-        priceFilter(value);
+        setPriceFilter(value);
         break;
       case FilterSelectorsName.ROOMS:
-        roomsFilter(value);
+        setRoomsFilter(value);
         break;
       case FilterSelectorsName.GUESTS:
-        guestsFilter(value);
+        setGuestsFilter(value);
         break;
     }
-  }
-  featuresFilter();
+  });
+  setFeaturesFilter();
   renderPins(filteredData);
 };
 

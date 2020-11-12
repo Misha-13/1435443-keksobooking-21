@@ -5,7 +5,7 @@ const Y_DISABLED_PIN_POSITION = 375;
 const HALF_DISABLED_PIN_SIZE = 32.5;
 const MOVEABLE_PIN_TALE_SIZE = 22;
 const form = document.querySelector(`.ad-form`);
-const formFieldsets = form.querySelectorAll(`fieldset`);
+const formFieldsets = Array.from(form.querySelectorAll(`fieldset`));
 const addressInput = form.querySelector(`#address`);
 const mainPin = document.querySelector(`.map__pin--main`);
 const realtyType = form.querySelector(`#type`);
@@ -19,7 +19,7 @@ const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVE
 const capacitySelector = form.querySelector(`#capacity`);
 const roomsSelector = form.querySelector(`#room_number`);
 const filter = document.querySelector(`.map__filters`);
-const filterFields = filter.children;
+const filterFields = Array.from(filter.children);
 const realtyChooser = document.querySelector(`.ad-form__input`);
 const realtyPreview = document.querySelector(`.ad-form__photo`);
 const avatarChooser = document.querySelector(`.ad-form-header__input`);
@@ -45,9 +45,9 @@ const getDisabledAddress = () => {
 };
 
 const switchDisabledValue = (currentCollection) => {
-  for (let i = 0; i < currentCollection.length; i++) {
-    currentCollection[i].toggleAttribute(`disabled`);
-  }
+  currentCollection.forEach((element) => {
+    element.toggleAttribute(`disabled`);
+  });
 };
 
 const getAddress = (x, y) => {
@@ -102,11 +102,11 @@ const activateForm = () => {
 };
 
 const onPinKeydown = (evt) => {
-  window.utility.isEnterEvent(evt, activateForm);
+  window.utility.setEnterEvent(evt, activateForm);
 };
 
 const onPinMousedown = (evt) => {
-  window.utility.isMainMouseEvent(evt, activateForm);
+  window.utility.setMainMouseEvent(evt, activateForm);
 };
 
 const activatePage = () => {
@@ -121,11 +121,11 @@ const onActivatedEventsRemove = () => {
 };
 
 const onPinSecondKeydown = (evt) => {
-  window.utility.isEnterEvent(evt, onActivatedEventsRemove);
+  window.utility.setEnterEvent(evt, onActivatedEventsRemove);
 };
 
 const onPinSecondMousedown = (evt) => {
-  window.utility.isMainMouseEvent(evt, onActivatedEventsRemove);
+  window.utility.setMainMouseEvent(evt, onActivatedEventsRemove);
 };
 
 const onSelectorsCheck = () => {

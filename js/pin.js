@@ -5,7 +5,7 @@ const MAX_X = 1200;
 const MIN_Y = 130;
 const MAX_Y = 630;
 const HALF_PIN_SIZE = 32.5;
-const PIN_TOP_BOTTOM_CORRECT = 65;
+const PIN_TOP_BOTTOM_CORRECT = 87;
 const mainPin = document.querySelector(`.map__pin--main`);
 
 const checkXBound = (x) => {
@@ -21,9 +21,10 @@ const checkXBound = (x) => {
 };
 
 const checkYBound = (y) => {
+  const maxY = MAX_Y - PIN_TOP_BOTTOM_CORRECT;
   const minY = MIN_Y - PIN_TOP_BOTTOM_CORRECT;
-  if (y > MAX_Y) {
-    return MAX_Y;
+  if (y > maxY) {
+    return maxY;
   }
   if (y < minY) {
     return minY;
