@@ -11,5 +11,5 @@ const setDebounce = (action) => {
 };
 
 window.debounce = {
-  setDebounce
+  set: setDebounce
 };

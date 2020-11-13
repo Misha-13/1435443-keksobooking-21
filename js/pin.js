@@ -6,28 +6,28 @@ const MIN_Y = 130;
 const MAX_Y = 630;
 const HALF_PIN_SIZE = 32.5;
 const PIN_TOP_BOTTOM_CORRECT = 87;
+const maxBoundX = MAX_X - HALF_PIN_SIZE;
+const minBoundX = MIN_X - HALF_PIN_SIZE;
+const maxBoundY = MAX_Y - PIN_TOP_BOTTOM_CORRECT;
+const minBoundY = MIN_Y - PIN_TOP_BOTTOM_CORRECT;
 const mainPin = document.querySelector(`.map__pin--main`);
 
 const checkXBound = (x) => {
-  const maxX = MAX_X - HALF_PIN_SIZE;
-  const minX = MIN_X - HALF_PIN_SIZE;
-  if (x > maxX) {
-    return maxX;
+  if (x > maxBoundX) {
+    return maxBoundX;
   }
-  if (x < minX) {
-    return minX;
+  if (x < minBoundX) {
+    return minBoundX;
   }
   return x;
 };
 
 const checkYBound = (y) => {
-  const maxY = MAX_Y - PIN_TOP_BOTTOM_CORRECT;
-  const minY = MIN_Y - PIN_TOP_BOTTOM_CORRECT;
-  if (y > maxY) {
-    return maxY;
+  if (y > maxBoundY) {
+    return maxBoundY;
   }
-  if (y < minY) {
-    return minY;
+  if (y < minBoundY) {
+    return minBoundY;
   }
   return y;
 };
@@ -72,5 +72,5 @@ const movePin = () => {
 };
 
 window.pin = {
-  movePin
+  move: movePin
 };

@@ -56,7 +56,7 @@ const removePreview = (photoOutput) => {
 };
 
 window.preview = {
-  showPreview,
-  removePreview
+  show: showPreview,
+  remove: removePreview
 };
 

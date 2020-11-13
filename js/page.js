@@ -31,11 +31,11 @@ const TypeMinCostMatch = {
   BUNGALOW: 0
 };
 
-window.preview.showPreview(avatarChooser, avatarPreview);
-window.preview.showPreview(realtyChooser, realtyPreview);
+window.preview.show(avatarChooser, avatarPreview);
+window.preview.show(realtyChooser, realtyPreview);
 
 const onSelectorsChanged = () => {
-  window.debounce.setDebounce(window.map.applyFilter);
+  window.debounce.set(window.map.applyFilter);
 };
 
 filter.addEventListener(`change`, onSelectorsChanged);
@@ -82,8 +82,8 @@ const onFormAfterReset = () => {
   document.querySelector(`.map`).classList.add(`map--faded`);
   window.map.removeExistPin();
   window.map.removePins();
-  window.preview.removePreview(avatarPreview);
-  window.preview.removePreview(realtyPreview);
+  window.preview.remove(avatarPreview);
+  window.preview.remove(realtyPreview);
   filter.reset();
   blockPage();
 };
@@ -97,7 +97,7 @@ const activateForm = () => {
   form.classList.remove(`ad-form--disabled`);
   getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
   activateElements();
-  window.load.getData(window.map.saveServerData, window.error.showError);
+  window.load.getData(window.map.saveServerData, window.error.show);
   setValidation();
 };
 
@@ -145,7 +145,7 @@ roomsSelector.addEventListener(`input`, onSelectorsCheck);
 form.addEventListener(`submit`, (evt) => {
   onSelectorsCheck();
   if (capacitySelector.reportValidity()) {
-    window.upload.uploadData(new FormData(form), () => {
+    window.upload.upload(new FormData(form), () => {
       submitButton.focus();
       form.reset();
       submitButton.blur();
@@ -170,5 +170,5 @@ const blockPage = () => {
 
 window.page = {
   getAddress,
-  blockPage
+  block: blockPage
 };
