@@ -10,7 +10,7 @@ const TypeRusMatch = {
 
 const fillPhotos = (template, photo) => {
   const img = template.cloneNode(true);
-  img.setAttribute(`src`, photo);
+  img.src = photo;
   return img;
 };
 

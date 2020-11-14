@@ -4,6 +4,9 @@ const X_DISABLED_PIN_POSITION = 570;
 const Y_DISABLED_PIN_POSITION = 375;
 const HALF_DISABLED_PIN_SIZE = 32.5;
 const MOVEABLE_PIN_TALE_SIZE = 22;
+const ROOM_EXCEPTION = 100;
+const GUEST_EXCEPTION = 0;
+const RESET_DELAY = 100;
 const form = document.querySelector(`.ad-form`);
 const formFieldsets = Array.from(form.querySelectorAll(`fieldset`));
 const addressInput = form.querySelector(`#address`);
@@ -131,7 +134,7 @@ const onPinSecondMousedown = (evt) => {
 const onSelectorsCheck = () => {
   const roomNum = +roomsSelector.value;
   const guestNum = +capacitySelector.value;
-  const isValidChoice = roomNum === 100 ? (guestNum === 0) : (roomNum > guestNum && guestNum !== 0 || roomNum === guestNum);
+  const isValidChoice = roomNum === ROOM_EXCEPTION ? (guestNum === GUEST_EXCEPTION) : (roomNum > guestNum && guestNum !== GUEST_EXCEPTION || roomNum === guestNum);
   if (isValidChoice) {
     return capacitySelector.setCustomValidity(``);
   }
@@ -155,7 +158,7 @@ form.addEventListener(`submit`, (evt) => {
 });
 
 form.addEventListener(`reset`, () => {
-  setTimeout(onFormAfterReset, 100);
+  setTimeout(onFormAfterReset, RESET_DELAY);
 });
 
 const blockPage = () => {
