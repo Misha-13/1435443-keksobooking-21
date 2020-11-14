@@ -130,7 +130,9 @@ const setPriceFilter = (value) => {
 const setCommonFilter = (value, key) => {
   if (value !== `any`) {
     filteredData = filteredData.filter((pin) => {
-      return pin.offer[key] === (isNaN(value) ? value : +value);
+      const pinValue = pin.offer[key];
+      const filterValue = isNaN(value) ? value : +value;
+      return pinValue === filterValue;
     });
   }
 };

@@ -145,7 +145,7 @@ roomsSelector.addEventListener(`input`, onSelectorsCheck);
 form.addEventListener(`submit`, (evt) => {
   onSelectorsCheck();
   if (capacitySelector.reportValidity()) {
-    window.upload.upload(new FormData(form), () => {
+    window.upload.post(new FormData(form), () => {
       submitButton.focus();
       form.reset();
       submitButton.blur();

@@ -14,14 +14,14 @@ const fillPhotos = (template, photo) => {
   return img;
 };
 
-const fillPhotosBlock = (photo) => {
+const fillPhotosBlock = (photos) => {
   const imgTemplate = document.card.querySelector(`.popup__photos`).querySelector(`img`);
-  if (photo && photo.length > 0) {
+  if (photos && photos.length > 0) {
     const imgList = document.card.querySelector(`.popup__photos`);
     const imgFragment = document.createDocumentFragment();
-    document.card.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, photo[0]);
-    for (let i = 1; i < photo.length; i++) {
-      imgFragment.appendChild(fillPhotos(imgTemplate, photo[i]));
+    document.card.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, photos[0]);
+    for (let i = 1; i < photos.length; i++) {
+      imgFragment.appendChild(fillPhotos(imgTemplate, photos[i]));
     }
     imgList.appendChild(imgFragment);
   } else {
@@ -43,11 +43,7 @@ const setFullFields = (element, fistValue, secondValue) => {
 };
 
 const setPartField = (element, firstKey, fistValue, secondValue) => {
-  if (firstKey) {
-    element.textContent = fistValue;
-  } else {
-    element.textContent = secondValue;
-  }
+  element.textContent = firstKey ? fistValue : secondValue;
 };
 
 const setMultipleBlocks = (firstObjectKey, firstValue, secondObjectKey, secondValue, tag) => {
@@ -66,7 +62,7 @@ const fillTextBlock = ({title, address, price, type, rooms, guests, checkin, che
   setSingleBlock(address, `.popup__text--address`, address);
   setSingleBlock(price, `.popup__text--price`, `${price} ₽/ночь`);
   setSingleBlock(type, `.popup__type`, TypeRusMatch[type]);
-  setMultipleBlocks(rooms, `${rooms} комнаты(-а) для`, guests, ` ${guests}  гостей(-я)`, `.popup__text--capacity`);
+  setMultipleBlocks(rooms, `${rooms} комнаты(-а) `, guests, ` для ${guests}  гостей(-я)`, `.popup__text--capacity`);
   setMultipleBlocks(checkin, `Заезд после ${checkin}`, checkout, ` выезд до ${checkout}`, `.popup__text--time`);
   setSingleBlock(description, `.popup__description`, description);
 };

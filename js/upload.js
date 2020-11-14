@@ -50,5 +50,5 @@ const uploadData = (data, onSuccess) => {
 };
 
 window.upload = {
-  upload: uploadData
+  post: uploadData
 };
