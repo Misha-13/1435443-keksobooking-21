@@ -5,7 +5,7 @@ const Y_DISABLED_PIN_POSITION = 375;
 const HALF_DISABLED_PIN_SIZE = 32.5;
 const MOVEABLE_PIN_TALE_SIZE = 22;
 const form = document.querySelector(`.ad-form`);
-const formFieldsets = form.querySelectorAll(`fieldset`);
+const formFieldsets = Array.from(form.querySelectorAll(`fieldset`));
 const addressInput = form.querySelector(`#address`);
 const mainPin = document.querySelector(`.map__pin--main`);
 const realtyType = form.querySelector(`#type`);
@@ -19,6 +19,11 @@ const moveablePinShiftY = HALF_DISABLED_PIN_SIZE + HALF_DISABLED_PIN_SIZE + MOVE
 const capacitySelector = form.querySelector(`#capacity`);
 const roomsSelector = form.querySelector(`#room_number`);
 const filter = document.querySelector(`.map__filters`);
+const filterFields = Array.from(filter.children);
+const realtyChooser = document.querySelector(`.ad-form__input`);
+const realtyPreview = document.querySelector(`.ad-form__photo`);
+const avatarChooser = document.querySelector(`.ad-form-header__input`);
+const avatarPreview = document.querySelector(`.ad-form-header__preview`);
 const TypeMinCostMatch = {
   PALACE: 10000,
   FLAT: 1000,
@@ -26,8 +31,11 @@ const TypeMinCostMatch = {
   BUNGALOW: 0
 };
 
+window.preview.show(avatarChooser, avatarPreview);
+window.preview.show(realtyChooser, realtyPreview);
+
 const onSelectorsChanged = () => {
-  window.debounce.setDebounce(window.map.applyFilter);
+  window.debounce.set(window.map.applyFilter);
 };
 
 filter.addEventListener(`change`, onSelectorsChanged);
@@ -37,9 +45,9 @@ const getDisabledAddress = () => {
 };
 
 const switchDisabledValue = (currentCollection) => {
-  for (let i = 0; i < currentCollection.length; i++) {
-    currentCollection[i].toggleAttribute(`disabled`);
-  }
+  currentCollection.forEach((element) => {
+    element.toggleAttribute(`disabled`);
+  });
 };
 
 const getAddress = (x, y) => {
@@ -50,6 +58,7 @@ const getAddress = (x, y) => {
 
 const activateElements = () => {
   switchDisabledValue(formFieldsets);
+  switchDisabledValue(filterFields);
 };
 
 const onRealtySelectorCheck = () => {
@@ -73,6 +82,8 @@ const onFormAfterReset = () => {
   document.querySelector(`.map`).classList.add(`map--faded`);
   window.map.removeExistPin();
   window.map.removePins();
+  window.preview.remove(avatarPreview);
+  window.preview.remove(realtyPreview);
   filter.reset();
   blockPage();
 };
@@ -84,17 +95,18 @@ const setValidation = () => {
 
 const activateForm = () => {
   form.classList.remove(`ad-form--disabled`);
+  getAddress(X_DISABLED_PIN_POSITION, Y_DISABLED_PIN_POSITION);
   activateElements();
-  window.load.getData(window.map.saveServerData, window.error.showError);
+  window.load.getData(window.map.saveServerData, window.error.show);
   setValidation();
 };
 
 const onPinKeydown = (evt) => {
-  window.utility.isEnterEvent(evt, activateForm);
+  window.utility.setEnterEvent(evt, activateForm);
 };
 
 const onPinMousedown = (evt) => {
-  window.utility.isMainMouseEvent(evt, activateForm);
+  window.utility.setMainMouseEvent(evt, activateForm);
 };
 
 const activatePage = () => {
@@ -109,11 +121,11 @@ const onActivatedEventsRemove = () => {
 };
 
 const onPinSecondKeydown = (evt) => {
-  window.utility.isEnterEvent(evt, onActivatedEventsRemove);
+  window.utility.setEnterEvent(evt, onActivatedEventsRemove);
 };
 
 const onPinSecondMousedown = (evt) => {
-  window.utility.isMainMouseEvent(evt, onActivatedEventsRemove);
+  window.utility.setMainMouseEvent(evt, onActivatedEventsRemove);
 };
 
 const onSelectorsCheck = () => {
@@ -133,7 +145,7 @@ roomsSelector.addEventListener(`input`, onSelectorsCheck);
 form.addEventListener(`submit`, (evt) => {
   onSelectorsCheck();
   if (capacitySelector.reportValidity()) {
-    window.upload.uploadData(new FormData(form), () => {
+    window.upload.post(new FormData(form), () => {
       submitButton.focus();
       form.reset();
       submitButton.blur();
@@ -149,6 +161,7 @@ form.addEventListener(`reset`, () => {
 const blockPage = () => {
   getDisabledAddress();
   switchDisabledValue(formFieldsets);
+  switchDisabledValue(filterFields);
   activatePage();
   mainPin.addEventListener(`mousedown`, onPinSecondMousedown);
   mainPin.addEventListener(`keydown`, onPinSecondKeydown);
@@ -157,5 +170,5 @@ const blockPage = () => {
 
 window.page = {
   getAddress,
-  blockPage
+  block: blockPage
 };

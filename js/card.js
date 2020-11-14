@@ -1,68 +1,101 @@
 'use strict';
 
 const cardTemplate = document.querySelector(`#card`).content.querySelector(`.map__card`);
-
-const fillPhotos = (template, photo) => {
-  const imgElement = template.cloneNode(true);
-  imgElement.setAttribute(`src`, photo);
-  return imgElement;
+const TypeRusMatch = {
+  palace: `Дворец`,
+  flat: `Квартира`,
+  house: `Дом`,
+  bungalow: `Бунгало`
 };
 
-const fillPhotosBlock = (imgArray) => {
-  const imgTemplate = document.cardElement.querySelector(`.popup__photos`).querySelector(`img`);
-  if (imgArray.length > 0) {
-    const imgList = document.cardElement.querySelector(`.popup__photos`);
+const fillPhotos = (template, photo) => {
+  const img = template.cloneNode(true);
+  img.setAttribute(`src`, photo);
+  return img;
+};
+
+const fillPhotosBlock = (photos) => {
+  const imgTemplate = document.card.querySelector(`.popup__photos`).querySelector(`img`);
+  if (photos && photos.length > 0) {
+    const imgList = document.card.querySelector(`.popup__photos`);
     const imgFragment = document.createDocumentFragment();
-    document.cardElement.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, imgArray[0]);
-    for (let i = 1; i < imgArray.length; i++) {
-      imgFragment.appendChild(fillPhotos(imgTemplate, imgArray[i]));
+    document.card.querySelector(`.popup__photos`).querySelector(`img`).setAttribute(`src`, photos[0]);
+    for (let i = 1; i < photos.length; i++) {
+      imgFragment.appendChild(fillPhotos(imgTemplate, photos[i]));
     }
     imgList.appendChild(imgFragment);
   } else {
-    document.cardElement.querySelector(`.popup__photos`).querySelector(`img`).remove();
+    document.card.querySelector(`.popup__photos`).remove();
   }
 };
 
-const fillTextBlock = (currentObject) => {
-  const TypeRusMatch = {
-    palace: `Дворец`,
-    flat: `Квартира`,
-    house: `Дом`,
-    bungalow: `Бунгало`
-  };
-
-  document.cardElement.querySelector(`.popup__title`).textContent = currentObject.title;
-  document.cardElement.querySelector(`.popup__text--address`).textContent = currentObject.address;
-  document.cardElement.querySelector(`.popup__text--price`).textContent = currentObject.price + `₽/ночь`;
-  document.cardElement.querySelector(`.popup__type`).textContent = TypeRusMatch[currentObject.type];
-  document.cardElement.querySelector(`.popup__text--capacity`).textContent = currentObject.rooms + ` комнаты для ` + currentObject.guests + ` гостей`;
-  document.cardElement.querySelector(`.popup__text--time`).textContent = `Заезд после ` + currentObject.checkin + `, выезд до ` + currentObject.checkout;
-  document.cardElement.querySelector(`.popup__description`).textContent = currentObject.description;
+const setSingleBlock = (objectKey, tag, value) => {
+  const card = document.card.querySelector(tag);
+  if (objectKey) {
+    card.textContent = value;
+  } else {
+    card.remove();
+  }
 };
 
-const delNotUseFeatures = (currentArray) => {
-  const childrenElements = document.cardElement.querySelector(`.popup__features`).children;
-  for (let i = childrenElements.length - 1; i >= 0; i--) {
-    const childElement = childrenElements[i];
-    let existFlag = false;
-    for (let j = 0; j < currentArray.length; j++) {
-      if (childElement.classList.contains(`popup__feature--` + currentArray[j])) {
-        existFlag = true;
+const setFullFields = (element, fistValue, secondValue) => {
+  element.textContent = fistValue + secondValue;
+};
+
+const setPartField = (element, firstKey, fistValue, secondValue) => {
+  element.textContent = firstKey ? fistValue : secondValue;
+};
+
+const setMultipleBlocks = (firstObjectKey, firstValue, secondObjectKey, secondValue, tag) => {
+  const card = document.card.querySelector(tag);
+  if (firstObjectKey && secondObjectKey) {
+    return setFullFields(card, firstValue, secondValue);
+  }
+  if (firstObjectKey || secondObjectKey) {
+    return setPartField(card, firstObjectKey, firstValue, secondValue);
+  }
+  return card.remove();
+};
+
+const fillTextBlock = ({title, address, price, type, rooms, guests, checkin, checkout, description}) => {
+  setSingleBlock(title, `.popup__title`, title);
+  setSingleBlock(address, `.popup__text--address`, address);
+  setSingleBlock(price, `.popup__text--price`, `${price} ₽/ночь`);
+  setSingleBlock(type, `.popup__type`, TypeRusMatch[type]);
+  setMultipleBlocks(rooms, `${rooms} комнаты(-а) `, guests, ` для ${guests}  гостей(-я)`, `.popup__text--capacity`);
+  setMultipleBlocks(checkin, `Заезд после ${checkin}`, checkout, ` выезд до ${checkout}`, `.popup__text--time`);
+  setSingleBlock(description, `.popup__description`, description);
+};
+
+const deleteFeatures = (features) => {
+  const featuresBlock = document.card.querySelector(`.popup__features`);
+  if (features && features.length > 0) {
+    const children = document.card.querySelector(`.popup__features`).children;
+    const childrenArray = Array.from(children);
+    childrenArray.forEach((element) => {
+      let existFlag = false;
+      for (let j = 0; j < features.length; j++) {
+        if (element.classList.contains(`popup__feature--` + features[j])) {
+          existFlag = true;
+          break;
+        }
       }
-    }
-    if (existFlag === false) {
-      childElement.remove();
-    }
+      if (!existFlag) {
+        element.remove();
+      }
+    });
+  } else {
+    featuresBlock.remove();
   }
 };
 
 const fillCards = (card) => {
-  document.cardElement = cardTemplate.cloneNode(true);
-  document.cardElement.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
+  document.card = cardTemplate.cloneNode(true);
+  document.card.querySelector(`.popup__avatar`).setAttribute(`src`, card.author.avatar);
   fillTextBlock(card.offer);
-  delNotUseFeatures(card.offer.features);
+  deleteFeatures(card.offer.features);
   fillPhotosBlock(card.offer.photos);
-  return document.cardElement;
+  return document.card;
 };
 
 window.card = {

@@ -5,12 +5,12 @@ const Y_SHIFT = 70;
 const EXCEPTION = `map__pin--main`;
 const MAX_PINS = 5;
 const cardFragment = document.createDocumentFragment();
-const mapArea = document.querySelector(`.map`);
-const insertTargetElement = mapArea.querySelector(`.map__filters-container`);
+const map = document.querySelector(`.map`);
+const target = map.querySelector(`.map__filters-container`);
 const pinTemplate = document.querySelector(`#pin`).content.querySelector(`.map__pin`);
 const pinsList = document.querySelector(`.map__pins`);
 const fragment = document.createDocumentFragment();
-const selectors = mapArea.querySelectorAll(`.map__filter`);
+const selectors = Array.from(map.querySelectorAll(`.map__filter`));
 let serverData = [];
 let filteredData;
 const FilterSelectorsName = {
@@ -29,36 +29,36 @@ const PriceBound = {
   HIGH: 50000
 };
 
-const fillPins = (pin) => {
-  const pinElement = pinTemplate.cloneNode(true);
-  const img = pinElement.querySelector(`img`);
-  const pinX = pin.location.x - X_SHIFT;
-  const pinY = pin.location.y - Y_SHIFT;
-  pinElement.setAttribute(`style`, `left: ` + pinX + `px; top: ` + pinY + `px;`);
-  img.setAttribute(`src`, pin.author.avatar);
-  img.setAttribute(`alt`, pin.offer.title);
-  return pinElement;
+const fillPins = (pinObject) => {
+  const pin = pinTemplate.cloneNode(true);
+  const img = pin.querySelector(`img`);
+  const pinX = pinObject.location.x - X_SHIFT;
+  const pinY = pinObject.location.y - Y_SHIFT;
+  pin.setAttribute(`style`, `left: ` + pinX + `px; top: ` + pinY + `px;`);
+  img.setAttribute(`src`, pinObject.author.avatar);
+  img.setAttribute(`alt`, pinObject.offer.title);
+  return pin;
 };
 
 const removeExistPin = () => {
-  const mapAreaElement = mapArea.querySelector(`.map__card`);
-  if (mapAreaElement) {
-    const activatedPin = mapArea.querySelector(`.map__pin--active`);
-    mapAreaElement.remove();
+  const mapArea = map.querySelector(`.map__card`);
+  if (mapArea) {
+    const activatedPin = map.querySelector(`.map__pin--active`);
+    mapArea.remove();
     activatedPin.classList.remove(`map__pin--active`);
   }
 };
 
 const onInfoPinKeydown = (evt) => {
-  window.utility.isEscapeEvent(evt, () => {
+  window.utility.setEscapeEvent(evt, () => {
     removeExistPin();
     document.removeEventListener(`keydown`, onInfoPinKeydown);
   });
 };
 
 const setExitButtonEvent = () => {
-  const mapAreaElement = mapArea.querySelector(`.map__card`);
-  const closePopupButton = mapAreaElement.querySelector(`.popup__close`);
+  const mapArea = map.querySelector(`.map__card`);
+  const closePopupButton = mapArea.querySelector(`.popup__close`);
   closePopupButton.addEventListener(`click`, () => {
     removeExistPin();
   });
@@ -67,60 +67,54 @@ const setExitButtonEvent = () => {
 const showPinsCard = (pin) => {
   removeExistPin();
   cardFragment.appendChild(window.card.fillCards(pin));
-  mapArea.insertBefore(cardFragment, insertTargetElement);
+  map.insertBefore(cardFragment, target);
   setExitButtonEvent();
   document.addEventListener(`keydown`, onInfoPinKeydown);
 };
 
 const renderPinCard = (pinsArray) => {
-  const mapPinsList = mapArea.querySelectorAll(`.map__pin`);
+  const mapPinsList = Array.from(map.querySelectorAll(`.map__pin`));
   let exceptionCounter = 0;
-  for (let i = 0; i < mapPinsList.length; i++) {
-    if (!mapPinsList[i].classList.contains(EXCEPTION)) {
-      const currentPin = pinsArray[i - exceptionCounter];
-      mapPinsList[i].addEventListener(`click`, () => {
+  mapPinsList.forEach((element, index) => {
+    if (!element.classList.contains(EXCEPTION)) {
+      const currentPin = pinsArray[index - exceptionCounter];
+      element.addEventListener(`click`, () => {
         showPinsCard(currentPin);
-        mapPinsList[i].classList.add(`map__pin--active`);
+        element.classList.add(`map__pin--active`);
       });
     } else {
       exceptionCounter++;
     }
-  }
+  });
 };
 
 const removePins = () => {
-  const mapPinsList = mapArea.querySelectorAll(`.map__pin`);
-  for (let i = mapPinsList.length - 1; i > 0; i--) {
-    if (!mapPinsList[i].classList.contains(EXCEPTION)) {
-      mapPinsList[i].remove();
+  const mapPinsList = Array.from(map.querySelectorAll(`.map__pin`));
+  mapPinsList.forEach((element) => {
+    if (!element.classList.contains(EXCEPTION)) {
+      element.remove();
     }
-  }
+  });
 };
 
 const renderPins = (data) => {
   const takeLenght = data.length > MAX_PINS ? MAX_PINS : data.length;
   for (let i = 0; i < takeLenght; i++) {
-    fragment.appendChild(fillPins(data[i]));
+    if (data[i].offer) {
+      fragment.appendChild(fillPins(data[i]));
+    }
   }
   pinsList.appendChild(fragment);
   renderPinCard(data);
 };
 
 const saveServerData = (data) => {
-  mapArea.classList.remove(`map--faded`);
+  map.classList.remove(`map--faded`);
   serverData = data;
   renderPins(data);
 };
 
-const typeFilter = (value) => {
-  if (value !== `any`) {
-    filteredData = filteredData.filter((pin) => {
-      return pin.offer.type === value;
-    });
-  }
-};
-
-const priceFilter = (value) => {
+const setPriceFilter = (value) => {
   if (value !== `any`) {
     filteredData = filteredData.filter((pin) => {
       if (value === PriceValue.LOW) {
@@ -133,53 +127,47 @@ const priceFilter = (value) => {
   }
 };
 
-const roomsFilter = (value) => {
+const setCommonFilter = (value, key) => {
   if (value !== `any`) {
     filteredData = filteredData.filter((pin) => {
-      return pin.offer.rooms === +value;
+      const pinValue = pin.offer[key];
+      const filterValue = isNaN(value) ? value : +value;
+      return pinValue === filterValue;
     });
   }
 };
 
-const guestsFilter = (value) => {
-  if (value !== `any`) {
+const setFeaturesFilter = () => {
+  const checks = Array.from(map.querySelectorAll(`.map__checkbox:checked`));
+  checks.forEach((element) => {
     filteredData = filteredData.filter((pin) => {
-      return pin.offer.guests === +value;
+      return pin.offer.features.includes(element.value);
     });
-  }
-};
-
-const featuresFilter = () => {
-  const checks = mapArea.querySelectorAll(`.map__checkbox:checked`);
-  for (let i = 0; i < checks.length; i++) {
-    filteredData = filteredData.filter((pin) => {
-      return pin.offer.features.includes(checks[i].value);
-    });
-  }
+  });
 };
 
 const applyFilter = () => {
   filteredData = serverData;
   removeExistPin();
   removePins();
-  for (let i = 0; i < selectors.length; i++) {
-    const {name, value} = selectors[i];
+  selectors.forEach((element) => {
+    const {name, value} = element;
     switch (name) {
       case FilterSelectorsName.TYPE:
-        typeFilter(value);
+        setCommonFilter(value, `type`);
         break;
       case FilterSelectorsName.PRICE:
-        priceFilter(value);
+        setPriceFilter(value);
         break;
       case FilterSelectorsName.ROOMS:
-        roomsFilter(value);
+        setCommonFilter(value, `rooms`);
         break;
       case FilterSelectorsName.GUESTS:
-        guestsFilter(value);
+        setCommonFilter(value, `guests`);
         break;
     }
-  }
-  featuresFilter();
+  });
+  setFeaturesFilter();
   renderPins(filteredData);
 };
 

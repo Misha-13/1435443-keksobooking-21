@@ -1,4 +1,4 @@
 'use strict';
 
-window.pin.movePin();
-window.page.blockPage();
+window.pin.move();
+window.page.block();

@@ -7,7 +7,7 @@ module.exports = {
     "./js/load.js",
     "./js/upload.js",
     "./js/debounce.js",
-    "./js/data.js",
+    "./js/preview.js",
     "./js/map.js",
     "./js/card.js",
     "./js/pin.js",

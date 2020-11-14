@@ -14,7 +14,7 @@ const showUploadInfo = (windowId) => {
   msgWindow.addEventListener(`click`, onMsgWindowRemove);
 
   const onMsgKeyDown = (evt) => {
-    window.utility.isEscapeEvent(evt, onMsgWindowRemove);
+    window.utility.setEscapeEvent(evt, onMsgWindowRemove);
     window.removeEventListener(`keydown`, onMsgKeyDown);
   };
 
@@ -50,5 +50,5 @@ const uploadData = (data, onSuccess) => {
 };
 
 window.upload = {
-  uploadData
+  post: uploadData
 };
